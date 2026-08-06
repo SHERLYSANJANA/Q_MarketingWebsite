@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Q — Know why you spend, not just where.</title>
+<meta name="description" content="Q reads your bank SMS privately on your device and turns your spending into a behavioral profile: scores, streaks, a financial persona, and an AI coach that runs 100% offline.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Exact tokens from the real app's C{} object */
+    --bg: #080808;
+    --glass: rgba(255,255,255,0.05);
+    --glass-strong: rgba(255,255,255,0.08);
+    --glass-highlight: rgba(255,255,255,0.22);
+    --border: rgba(255,255,255,0.10);
+    --border-strong: rgba(255,255,255,0.14);
+    --text-primary: #FFFFFF;
+    --text-secondary: #9A9AA0;
+    --accent: #38BDF8;
+    --success: #10B981;
+    --warning: #F59E0B;
+    --danger: #EF4444;
+    --purple: #8B5CF6;
+    --display: 'Bricolage Grotesque', sans-serif;
+    --body: 'Inter', sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
+    --ease-swish: cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text-primary);
+    font-family: var(--body); line-height: 1.55; -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  img, svg { max-width: 100%; display: block; }
+  a { color: inherit; text-decoration: none; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 0 28px; }
+  @media (max-width: 640px) { .wrap { padding: 0 20px; } }
+
+  /* anchored sections shouldn't hide under the fixed header on jump */
+  #features, #modes, #pricing, #faq, #waitlist { scroll-margin-top: 88px; }
+
+  h1, h2, h3 { font-family: var(--display); font-weight: 600; letter-spacing: -0.02em; margin: 0; }
+
+  /* ---------- Two drifting bright spots (fixed, behind everything, always visible) ---------- */
+  .orb-wrap {
+    position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    transition: transform 0.1s linear;
+  }
+  .orb {
+    position: absolute; border-radius: 50%;
+    filter: blur(10px);
+  }
+  .orb-a {
+    width: 280px; height: 280px; top: 6%; left: 8%; animation: driftA 22s ease-in-out infinite;
+    background: radial-gradient(circle at 42% 38%, rgba(240,249,255,1) 0%, rgba(186,230,253,0.9) 14%, rgba(125,211,252,0.55) 30%, rgba(56,189,248,0.18) 48%, transparent 65%);
+    box-shadow: 0 0 90px 20px rgba(125,211,252,0.35);
+  }
+  .orb-b {
+    width: 230px; height: 230px; bottom: 10%; right: 10%; animation: driftB 19s ease-in-out infinite;
+    background: radial-gradient(circle at 42% 38%, rgba(224,238,255,1) 0%, rgba(147,197,253,0.9) 14%, rgba(59,130,246,0.55) 30%, rgba(37,99,235,0.18) 48%, transparent 65%);
+    box-shadow: 0 0 90px 20px rgba(59,130,246,0.3);
+  }
+  @keyframes driftA {
+    0%   { transform: translate(0,0) rotate(0deg) scale(1); }
+    25%  { transform: translate(140px, 100px) rotate(16deg) scale(1.15); }
+    50%  { transform: translate(60px, 240px) rotate(-6deg) scale(0.9); }
+    75%  { transform: translate(180px, 60px) rotate(10deg) scale(1.05); }
+    100% { transform: translate(0,0) rotate(0deg) scale(1); }
+  }
+  @keyframes driftB {
+    0%   { transform: translate(0,0) rotate(0deg) scale(1); }
+    30%  { transform: translate(-150px, -110px) rotate(-14deg) scale(1.18); }
+    55%  { transform: translate(-40px, -220px) rotate(8deg) scale(0.88); }
+    80%  { transform: translate(-170px, -50px) rotate(-10deg) scale(1.08); }
+    100% { transform: translate(0,0) rotate(0deg) scale(1); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .orb-a, .orb-b { animation: none; }
+  }
+
+  /* ---------- Scroll progress bar ---------- */
+  .scroll-progress {
+    position: fixed; top: 0; left: 0; height: 2px; width: 0%;
+    background: linear-gradient(90deg, var(--accent), var(--purple));
+    z-index: 200; transition: width 0.1s linear;
+    box-shadow: 0 0 12px rgba(56,189,248,0.6);
+  }
+
+  .reveal {
+    opacity: 0; transform: perspective(1200px) translateY(26px) rotateX(8deg);
+    transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+  }
+  .reveal.in { opacity: 1; transform: perspective(1200px) translateY(0) rotateX(0deg); }
+  @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+  /* stagger helper: apply on grid children, JS sets --i */
+  .stagger { transition-delay: calc(var(--i, 0) * 90ms); }
+
+  .eyebrow {
+    font-family: var(--mono); font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.14em;
+    color: var(--accent); margin: 0 0 16px; display: flex; align-items: center; gap: 8px; font-weight: 600;
+  }
+  .eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); animation: pulseDot 2.2s ease-in-out infinite; }
+  @keyframes pulseDot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.75); } }
+
+  /* ---------- Real "glass card" system, ported directly from RN styles ---------- */
+  .glass-card {
+    background: var(--glass); border: 1px solid var(--border); border-top-color: var(--glass-highlight);
+    border-radius: 22px; box-shadow: 0 10px 18px rgba(0,0,0,0.28);
+    transition: transform 0.55s var(--ease-swish), border-color 0.4s var(--ease-soft), box-shadow 0.5s var(--ease-soft), background 0.4s var(--ease-soft);
+  }
+  .glass-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--border-strong);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.06);
+    background: var(--glass-strong);
+  }
+  .glass-card-heavy {
+    background: var(--glass-strong); border: 1px solid var(--border-strong); border-top-color: var(--glass-highlight);
+    border-radius: 26px; box-shadow: 0 12px 22px rgba(0,0,0,0.32);
+    transition: box-shadow 0.5s var(--ease-soft), transform 0.55s var(--ease-swish);
+  }
+  .glass-card-heavy:hover { box-shadow: 0 24px 48px rgba(0,0,0,0.4), 0 0 40px rgba(56,189,248,0.08); }
+  .card-eyebrow { color: var(--text-secondary); font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 16px; font-family: var(--mono); }
+
+  /* ---------- Nav ---------- */
+  header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(8,8,8,0.6); backdrop-filter: blur(14px);
+    border-bottom: 1px solid transparent;
+    transition: background 0.4s var(--ease-soft), border-color 0.4s var(--ease-soft);
+  }
+  header.scrolled { background: rgba(8,8,8,0.82); border-bottom-color: var(--border); }
+  nav.wrap { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+  .logo {
+    font-family: var(--display); font-weight: 800; font-size: 22px; letter-spacing: -0.01em;
+    color: var(--accent); text-shadow: 0 0 20px rgba(56,189,248,0.5);
+    transition: opacity 0.3s var(--ease-soft);
+  }
+  .navlinks { display: none; gap: 32px; font-size: 14px; color: var(--text-secondary); }
+  @media (min-width: 860px) { .navlinks { display: flex; } }
+  .navlinks a { position: relative; padding-bottom: 3px; transition: color 0.3s var(--ease-soft); }
+  .navlinks a::after {
+    content: ""; position: absolute; left: 0; bottom: 0; width: 100%; height: 1px;
+    background: var(--accent); transform: scaleX(0); transform-origin: right; transition: transform 0.4s var(--ease-swish);
+  }
+  .navlinks a:hover { color: var(--text-primary); }
+  .navlinks a:hover::after { transform: scaleX(1); transform-origin: left; }
+
+  .btn {
+    font-family: var(--body); font-weight: 600; font-size: 14px; border-radius: 980px;
+    padding: 11px 22px; border: 1px solid transparent; cursor: pointer;
+    transition: transform 0.4s var(--ease-swish), box-shadow 0.35s var(--ease-soft), filter 0.3s var(--ease-soft), border-color 0.3s var(--ease-soft);
+    display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
+    position: relative; overflow: hidden;
+  }
+  .btn::before {
+    content: ""; position: absolute; inset: 0; border-radius: inherit;
+    background: linear-gradient(120deg, transparent 20%, rgba(255,255,255,0.35) 50%, transparent 80%);
+    transform: translateX(-120%); transition: transform 0.65s var(--ease);
+  }
+  .btn:hover::before { transform: translateX(120%); }
+  .btn-primary { background: var(--accent); color: #001018; box-shadow: 0 6px 16px rgba(56,189,248,0.3); }
+  .btn-primary:hover { filter: brightness(1.08); transform: translateY(-2px); box-shadow: 0 10px 26px rgba(56,189,248,0.42); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-ghost { background: transparent; color: var(--text-primary); border-color: var(--border); }
+  .btn-ghost:hover { border-color: var(--border-strong); transform: translateY(-2px); background: rgba(255,255,255,0.03); }
+  .btn:active { transform: scale(0.96) translateY(0); transition: transform 0.15s ease-out; }
+
+  /* ---------- Hero ---------- */
+  .hero { padding: 152px 0 100px; position: relative; overflow: hidden; }
+  .hero::before {
+    content: ""; position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
+    width: 900px; height: 500px; background: radial-gradient(circle, rgba(56,189,248,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .cursor-glow {
+    position: absolute; width: 480px; height: 480px; border-radius: 50%; pointer-events: none;
+    background: radial-gradient(circle, rgba(139,92,246,0.14) 0%, transparent 70%);
+    transform: translate(-50%, -50%); left: var(--x, 50%); top: var(--y, 30%);
+    transition: left 0.5s var(--ease-soft), top 0.5s var(--ease-soft); z-index: 0;
+  }
+  .hero-grid { display: grid; gap: 56px; align-items: center; position: relative; z-index: 1; }
+  @media (min-width: 940px) { .hero-grid { grid-template-columns: 1.05fr 0.95fr; } }
+  .hero h1 { font-size: clamp(2.3rem, 5.4vw, 3.6rem); line-height: 1.05; }
+  .hero h1 .accent {
+    background: linear-gradient(100deg, var(--accent), #7dd3fc 40%, var(--purple));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    background-size: 200% 100%; animation: gradientDrift 6s ease-in-out infinite;
+  }
+  @keyframes gradientDrift { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+  .hero p.lead { font-size: 18px; color: var(--text-secondary); max-width: 48ch; margin: 24px 0 32px; }
+  .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 28px; }
+  .trust-row { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 12.5px; color: var(--text-secondary); }
+  .trust-row span::before { content: "\2713"; color: var(--success); margin-right: 6px; font-weight: 700; }
+
+  /* ---------- Phone mockup: the signature element ---------- */
+  .phone {
+    width: 340px; max-width: 88vw; margin: 0 auto; border-radius: 30px; position: relative; z-index: 1;
+    background: linear-gradient(165deg, rgba(22,22,26,0.82), rgba(8,8,10,0.78));
+    -webkit-backdrop-filter: blur(28px) saturate(150%);
+    backdrop-filter: blur(28px) saturate(150%);
+    border: 1px solid var(--border-strong); border-top-color: var(--glass-highlight);
+    box-shadow: 0 50px 110px rgba(0,0,0,0.75), 0 20px 45px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04) inset;
+    padding: 30px 26px 26px;
+    transition: transform 0.65s var(--ease-swish), box-shadow 0.6s var(--ease-soft);
+  }
+  .phone:hover {
+    transform: perspective(900px) rotateY(-3deg) rotateX(1.5deg) translateY(-12px);
+    box-shadow: 0 60px 130px rgba(0,0,0,0.8), 0 0 80px rgba(56,189,248,0.16), 0 0 0 1px rgba(255,255,255,0.07) inset;
+  }
+  .phone-inner { margin-top: 4px; }
+  .phone-label { font-family: var(--mono); font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px; }
+
+  /* Wellness ring, real SVG matching CircularScoreCard's stroke-dashoffset logic */
+  .wellness-ring-wrap { display: flex; align-items: center; gap: 18px; margin-bottom: 18px; }
+  .ring-svg { transform: rotate(-90deg); }
+  .ring-track { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 8; }
+  .ring-fill {
+    fill: none; stroke: var(--accent); stroke-width: 8; stroke-linecap: round;
+    stroke-dasharray: 251; stroke-dashoffset: 251;
+    animation: fillRing 1.4s var(--ease) forwards; animation-delay: 0.4s;
+    filter: drop-shadow(0 0 8px rgba(56,189,248,0.6));
+  }
+  @keyframes fillRing { to { stroke-dashoffset: 63; } }
+  .ring-center { position: relative; width: 84px; height: 84px; }
+  .ring-num { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .ring-num .n { font-family: var(--display); font-size: 24px; font-weight: 700; }
+  .ring-num .l { font-family: var(--mono); font-size: 8px; color: var(--text-secondary); text-transform: uppercase; }
+
+  .meter { margin-bottom: 12px; }
+  .meter-row { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 5px; }
+  .meter-row .lbl { color: var(--text-secondary); }
+  .meter-row .val { color: var(--text-primary); font-weight: 600; font-family: var(--mono); }
+  .meter-bg { height: 6px; border-radius: 999px; background: rgba(255,255,255,0.05); overflow: hidden; }
+  .meter-fill { height: 100%; border-radius: 999px; width: 0; transition: width 1.3s var(--ease); position: relative; }
+  .meter-fill::after {
+    content: ""; position: absolute; inset: 0; border-radius: inherit;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+    transform: translateX(-100%); animation: sheen 2.4s ease-in-out 1.6s infinite;
+  }
+  @keyframes sheen { 0% { transform: translateX(-100%); } 40%, 100% { transform: translateX(220%); } }
+  .meter-fill.discipline { background: var(--success); }
+  .meter-fill.impulse { background: var(--warning); }
+  .meter-fill.volatility { background: var(--purple); }
+  .meter-fill.savings { background: var(--accent); }
+  .in-view .meter-fill.discipline { width: 78%; }
+  .in-view .meter-fill.impulse { width: 34%; }
+  .in-view .meter-fill.volatility { width: 41%; }
+  .in-view .meter-fill.savings { width: 63%; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ring-fill { animation: none; stroke-dashoffset: 63; }
+    .meter-fill, .meter-fill::after { transition: none; animation: none; }
+  }
+
+  /* ---------- Statement section ---------- */
+  .statement { padding: 120px 0; border-top: 1px solid var(--border); }
+  .statement h2 { font-size: clamp(1.9rem, 4.6vw, 2.8rem); line-height: 1.15; max-width: 20ch; }
+  .statement .dim { color: var(--text-secondary); font-weight: 500; }
+  .statement-row { display: grid; gap: 40px; margin-top: 56px; }
+  @media (min-width: 780px) { .statement-row { grid-template-columns: 1fr 1fr; } }
+  .statement-row h4 { font-family: var(--display); font-size: 19px; margin: 0 0 10px; }
+  .statement-row p { color: var(--text-secondary); font-size: 15px; margin: 0; max-width: 42ch; }
+
+  /* ---------- Feature showcase ---------- */
+  .features { padding: 120px 0; border-top: 1px solid var(--border); }
+  .features h2 { font-size: clamp(1.9rem, 4.6vw, 2.8rem); max-width: 22ch; margin-bottom: 60px; }
+  .feature-grid { display: grid; gap: 20px; }
+  @media (min-width: 700px) { .feature-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1040px) { .feature-grid { grid-template-columns: repeat(3, 1fr); } }
+  .feature-card { padding: 26px; display: flex; flex-direction: column; gap: 14px; }
+  .feature-icon {
+    width: 42px; height: 42px; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 19px;
+    transition: transform 0.5s var(--ease-swish);
+  }
+  .feature-card:hover .feature-icon { transform: scale(1.12) rotate(-6deg); }
+  .feature-card h4 { font-family: var(--display); font-size: 17px; margin: 0; }
+  .feature-card p { color: var(--text-secondary); font-size: 13.5px; margin: 0; line-height: 1.55; }
+  .feature-visual { margin-top: 6px; }
+
+  /* mini persona chip visual */
+  .persona-chip {
+    display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 14px;
+    background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+    transition: border-color 0.35s var(--ease-soft), background 0.35s var(--ease-soft);
+  }
+  .feature-card:hover .persona-chip { border-color: var(--border-strong); background: rgba(255,255,255,0.05); }
+  .persona-chip .glyph { font-size: 22px; }
+  .persona-chip .name { font-size: 13px; font-weight: 700; }
+
+  /* mini heatmap visual */
+  .mini-heatmap { display: grid; grid-template-columns: repeat(10, 1fr); gap: 3px; }
+  .mini-heatmap div { aspect-ratio: 1; border-radius: 3px; background: rgba(255,255,255,0.05); transition: transform 0.4s var(--ease-swish); }
+  .mini-heatmap div:hover { transform: scale(1.25); }
+
+  /* mini streak visual */
+  .streak-pill {
+    display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 980px;
+    background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); font-size: 12.5px; font-weight: 700; color: var(--warning);
+  }
+  .streak-pill .flame { display: inline-block; animation: flicker 1.8s ease-in-out infinite; }
+  @keyframes flicker { 0%, 100% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.15) rotate(-4deg); } }
+
+  /* mini cooling-off visual */
+  .cool-timer { font-family: var(--mono); font-size: 26px; font-weight: 600; color: var(--accent); text-shadow: 0 0 16px rgba(56,189,248,0.45); animation: glowPulse 2.6s ease-in-out infinite; }
+  @keyframes glowPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+
+  /* ---------- Mode split ---------- */
+  .modes { padding: 120px 0 90px; border-top: 1px solid var(--border); }
+  .modes h2 { font-size: clamp(1.9rem, 4.6vw, 2.8rem); max-width: 22ch; margin-bottom: 56px; }
+  .mode-split { display: grid; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  @media (min-width: 780px) { .mode-split { grid-template-columns: 1fr 1fr; } }
+  .mode-col { padding: 44px 38px; transition: background 0.4s var(--ease-soft); }
+  .mode-col.strict { border-right: 1px solid var(--border); }
+  .mode-col.liberal { background: var(--glass-strong); }
+  .mode-col:hover { background: rgba(255,255,255,0.06); }
+  .mode-col .mode-name { font-family: var(--display); font-size: 24px; font-weight: 600; margin-bottom: 14px; }
+  .mode-col p { color: var(--text-secondary); font-size: 14.5px; margin: 0; max-width: 40ch; }
+
+  /* ---------- Pricing ---------- */
+  .pricing { padding: 120px 0; border-top: 1px solid var(--border); }
+  .pricing h2 { font-size: clamp(1.9rem, 4.6vw, 2.8rem); max-width: 20ch; }
+  .pricing p.sub { color: var(--text-secondary); font-size: 15.5px; margin: 16px 0 56px; max-width: 52ch; }
+  .price-card { padding: 40px; max-width: 460px; }
+
+  .plan-toggle {
+    display: flex; align-items: stretch; width: 304px; max-width: 100%; padding: 4px; border-radius: 980px;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border); margin-bottom: 24px; position: relative;
+  }
+  .plan-toggle button {
+    position: relative; z-index: 1; border: none; background: transparent; cursor: pointer;
+    flex: 1 1 50%; min-width: 0; white-space: nowrap;
+    font-family: var(--body); font-weight: 600; font-size: 13.5px; color: var(--text-secondary);
+    padding: 9px 10px; border-radius: 980px; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    transition: color 0.3s var(--ease-soft);
+  }
+  .plan-toggle button.active { color: #001018; }
+  .plan-toggle .thumb {
+    position: absolute; top: 4px; left: 4px; height: calc(100% - 8px); width: calc(50% - 4px);
+    background: var(--accent); border-radius: 980px; transition: transform 0.45s var(--ease-swish);
+    box-shadow: 0 4px 14px rgba(56,189,248,0.35); transform: translateX(0);
+  }
+  .plan-toggle .thumb.shift { transform: translateX(100%); }
+  .save-badge {
+    font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--success);
+    background: rgba(16,185,129,0.14); border: 1px solid rgba(16,185,129,0.3);
+    padding: 2px 6px; border-radius: 980px; letter-spacing: 0.01em; white-space: nowrap; flex-shrink: 0;
+  }
+  .plan-toggle button:not(.active) .save-badge { opacity: 0.75; }
+
+  .price-tag { display: flex; align-items: baseline; gap: 8px; margin: 20px 0 8px; }
+  .price-tag .amt { font-family: var(--display); font-size: 44px; font-weight: 700; transition: opacity 0.25s var(--ease-soft); }
+  .price-tag .per { color: var(--text-secondary); font-size: 14px; }
+  .price-trial { font-family: var(--mono); font-size: 12.5px; color: var(--success); margin-bottom: 28px; }
+  .price-yearly-note { font-family: var(--mono); font-size: 12px; color: var(--text-secondary); margin: -20px 0 20px; display: none; }
+  .price-yearly-note.show { display: block; }
+  .price-list { list-style: none; margin: 0 0 32px; padding: 0; display: flex; flex-direction: column; gap: 13px; }
+  .price-list li { display: flex; gap: 10px; font-size: 14px; color: var(--text-primary); align-items: flex-start; transition: transform 0.35s var(--ease-swish); }
+  .price-list li:hover { transform: translateX(4px); }
+  .price-list li::before { content: "\2713"; color: var(--success); font-weight: 700; flex-shrink: 0; }
+
+  /* ---------- Testimonials ---------- */
+  /* ---------- ROI ---------- */
+  .roi { padding: 120px 0; border-top: 1px solid var(--border); }
+  .roi-card {
+    text-align: center; padding: 64px 44px 52px; max-width: 720px; margin: 0 auto; position: relative; overflow: visible;
+    background: linear-gradient(165deg, rgba(16,185,129,0.09), rgba(255,255,255,0.06));
+    border-color: rgba(16,185,129,0.3);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 60px rgba(16,185,129,0.1);
+  }
+  .roi-card::before {
+    content: ""; position: absolute; top: -40%; left: 50%; transform: translateX(-50%);
+    width: 560px; height: 340px; background: radial-gradient(circle, rgba(16,185,129,0.22) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .roi-card::after {
+    content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+    border: 1.5px solid rgba(16,185,129,0.55);
+    animation: roiPulse 2.8s ease-in-out infinite;
+  }
+  @keyframes roiPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.35); opacity: 0.65; }
+    50% { box-shadow: 0 0 34px 4px rgba(16,185,129,0.3); opacity: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) { .roi-card::after { animation: none; } }
+
+  .roi-badge {
+    position: absolute; top: -16px; left: 50%; transform: translateX(-50%); z-index: 2;
+    display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+    background: var(--success); color: #04140e; font-family: var(--mono); font-weight: 700; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.08em; padding: 7px 16px; border-radius: 980px;
+    box-shadow: 0 6px 20px rgba(16,185,129,0.45);
+  }
+
+  .roi-stat { position: relative; display: flex; flex-direction: column; align-items: center; margin-bottom: 6px; }
+  .roi-stat .num {
+    font-family: var(--display); font-weight: 800; font-size: clamp(4.2rem, 12vw, 6.4rem); line-height: 0.9;
+    color: var(--success); letter-spacing: -0.03em; text-shadow: 0 0 50px rgba(16,185,129,0.5);
+  }
+  .roi-stat .num-label {
+    font-family: var(--mono); font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  .roi-card h2 { font-size: clamp(1.5rem, 3.4vw, 2rem); margin: 18px 0 16px; position: relative; }
+  .roi-card .win { color: var(--success); }
+  .roi-card p { color: var(--text-secondary); font-size: 15.5px; max-width: 50ch; margin: 0 auto; position: relative; line-height: 1.6; }
+  .roi-card p .num { font-family: var(--mono); color: var(--text-primary); font-weight: 600; }
+
+  /* ---------- FAQ ---------- */
+  .faq { padding: 120px 0; border-top: 1px solid var(--border); }
+  .faq h2 { font-size: clamp(1.9rem, 4.6vw, 2.8rem); margin-bottom: 48px; }
+  details { border-top: 1px solid var(--border); padding: 22px 0; transition: background 0.3s var(--ease-soft); }
+  details:last-child { border-bottom: 1px solid var(--border); }
+  summary {
+    font-family: var(--display); font-weight: 600; font-size: 16.5px; cursor: pointer; list-style: none;
+    display: flex; justify-content: space-between; align-items: center; gap: 20px;
+    transition: color 0.3s var(--ease-soft);
+  }
+  summary:hover { color: var(--accent); }
+  summary::-webkit-details-marker { display: none; }
+  summary .icon {
+    font-size: 20px; color: var(--text-secondary); font-weight: 300; flex-shrink: 0;
+    display: inline-flex; width: 22px; height: 22px; align-items: center; justify-content: center;
+    transition: transform 0.45s var(--ease-swish);
+  }
+  details[open] summary .icon { transform: rotate(135deg); color: var(--accent); }
+  details p {
+    color: var(--text-secondary); font-size: 14px; margin: 14px 0 0; max-width: 62ch;
+    animation: faqFade 0.4s var(--ease-soft);
+  }
+  @keyframes faqFade { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ---------- Final CTA ---------- */
+  .final-cta { padding: 130px 0; text-align: center; border-top: 1px solid var(--border); position: relative; overflow: hidden; }
+  .final-cta::before {
+    content: ""; position: absolute; bottom: -200px; left: 50%; transform: translateX(-50%);
+    width: 900px; height: 500px; background: radial-gradient(circle, rgba(56,189,248,0.1) 0%, transparent 70%);
+    pointer-events: none; animation: floatOrb 8s ease-in-out infinite;
+  }
+  @keyframes floatOrb { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, -20px); } }
+  .final-cta-inner { position: relative; z-index: 1; }
+  .final-cta h2 { font-size: clamp(2rem, 5.2vw, 3.2rem); margin-bottom: 18px; }
+  .final-cta p { color: var(--text-secondary); font-size: 16px; max-width: 46ch; margin: 0 auto 34px; }
+  form.wl { display: flex; gap: 10px; max-width: 420px; margin: 0 auto; flex-wrap: wrap; justify-content: center; }
+  form.wl input[type="email"] {
+    flex: 1; min-width: 220px; border: 1px solid var(--border); border-radius: 980px; padding: 13px 20px;
+    font-family: var(--body); font-size: 14.5px; background: rgba(255,255,255,0.04); color: var(--text-primary);
+    transition: border-color 0.3s var(--ease-soft), background 0.3s var(--ease-soft);
+  }
+  form.wl input[type="email"]:focus { border-color: var(--accent); background: rgba(255,255,255,0.06); }
+  form.wl input::placeholder { color: var(--text-secondary); }
+  .wl-confirm { display: none; font-family: var(--mono); font-size: 13px; color: var(--success); margin-top: 16px; opacity: 0; transition: opacity 0.4s var(--ease-soft); }
+  .wl-confirm.show { display: block; opacity: 1; }
+
+  /* ---------- Footer ---------- */
+  footer { border-top: 1px solid var(--border); padding: 48px 0 32px; }
+  .foot-grid { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 28px; margin-bottom: 32px; }
+  .foot-links { display: flex; gap: 26px; font-size: 14px; color: var(--text-secondary); }
+  .foot-links a { transition: color 0.3s var(--ease-soft); }
+  .foot-links a:hover { color: var(--text-primary); }
+  .disclaimer { font-family: var(--mono); font-size: 11px; color: var(--text-secondary); line-height: 1.7; max-width: 78ch; }
+</style>
+</head>
+<body>
+
+<div class="orb-wrap" id="orbWrapA"><div class="orb orb-a"></div></div>
+<div class="orb-wrap" id="orbWrapB"><div class="orb orb-b"></div></div>
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<header id="siteHeader">
+  <nav class="wrap">
+    <div class="logo">Q</div>
+    <div class="navlinks">
+      <a href="#features">Features</a>
+      <a href="#modes">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <a href="#waitlist" class="btn btn-primary">Join the waitlist</a>
+  </nav>
+</header>
+
+<section class="hero" id="heroSection">
+  <div class="cursor-glow" id="cursorGlow"></div>
+  <div class="wrap hero-grid">
+    <div>
+      <p class="eyebrow">Reads your bank SMS on-device, nothing leaves your phone</p>
+      <h1>Your bank statement knows why you spend.<br><span class="accent">Q actually tells you.</span></h1>
+      <p class="lead">It reads every transaction that hits your account and builds an actual picture of how you spend, not just a list of amounts. Scores, streaks, a persona, and an AI coach that runs offline.</p>
+      <div class="hero-ctas">
+        <a href="#waitlist" class="btn btn-primary">Join the waitlist</a>
+        <a href="#features" class="btn btn-ghost">See what it does</a>
+      </div>
+      <div class="trust-row">
+        <span>7-day free trial</span>
+        <span>AI Coach runs offline</span>
+        <span>No lending, ever</span>
+      </div>
+    </div>
+
+    <div class="phone reveal" id="heroPhone">
+      <div class="phone-inner">
+        <div class="phone-label">Financial Wellness</div>
+        <div class="wellness-ring-wrap">
+          <div class="ring-center">
+            <svg class="ring-svg" width="84" height="84" viewBox="0 0 84 84">
+              <circle class="ring-track" cx="42" cy="42" r="40"></circle>
+              <circle class="ring-fill" cx="42" cy="42" r="40"></circle>
+            </svg>
+            <div class="ring-num"><span class="n">75</span><span class="l">Score</span></div>
+          </div>
+          <div style="flex:1;">
+            <div class="meter">
+              <div class="meter-row"><span class="lbl">Discipline</span><span class="val">78/100</span></div>
+              <div class="meter-bg"><div class="meter-fill discipline"></div></div>
+            </div>
+            <div class="meter">
+              <div class="meter-row"><span class="lbl">Impulse</span><span class="val">34/100</span></div>
+              <div class="meter-bg"><div class="meter-fill impulse"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="meter">
+          <div class="meter-row"><span class="lbl">Volatility</span><span class="val">41/100</span></div>
+          <div class="meter-bg"><div class="meter-fill volatility"></div></div>
+        </div>
+        <div class="meter">
+          <div class="meter-row"><span class="lbl">Savings Rate</span><span class="val">63/100</span></div>
+          <div class="meter-bg"><div class="meter-fill savings"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="statement">
+  <div class="wrap">
+    <p class="eyebrow">Not another expense tracker</p>
+    <h2 class="reveal">It studies how <span class="dim">you</span> actually spend.</h2>
+    <div class="statement-row">
+      <div class="reveal">
+        <h4>No manual entry, ever.</h4>
+        <p>Every bank SMS gets read and categorized the moment it lands, entirely on your device. Nothing to log, nothing to remember.</p>
+      </div>
+      <div class="reveal">
+        <h4>A pattern isn't a slip.</h4>
+        <p>A ₹600 order every Friday night isn't impulsive, it's just Friday. Q tells the difference instead of flagging every purchase the same way.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="features" id="features">
+  <div class="wrap">
+    <p class="eyebrow">What's actually inside</p>
+    <h2 class="reveal">Six things no expense tracker has tried before.</h2>
+    <div class="feature-grid">
+
+      <div class="feature-card glass-card reveal stagger tilt" style="--i:0">
+        <div class="feature-icon" style="background: rgba(56,189,248,0.14);">⚖️</div>
+        <h4>Financial Persona</h4>
+        <p>Your spending pattern gets turned into an identity: The Midnight Impulser, The Stealth Saver, The Weekend Warrior. Based on what you actually do, not a quiz.</p>
+        <div class="feature-visual persona-chip">
+          <span class="glyph">🛡️</span>
+          <span class="name">The Stealth Saver</span>
+        </div>
+      </div>
+
+      <div class="feature-card glass-card reveal stagger tilt" style="--i:1">
+        <div class="feature-icon" style="background: rgba(239,68,68,0.14);">🗺️</div>
+        <h4>30-Day Behavior Map</h4>
+        <p>A heatmap of your last 30 days. Every square colored by how much you spent and whether it looked impulsive, the kind of pattern you'd never spot in a list.</p>
+        <div class="feature-visual mini-heatmap" id="miniHeatmap"></div>
+      </div>
+
+      <div class="feature-card glass-card reveal stagger tilt" style="--i:2">
+        <div class="feature-icon" style="background: rgba(245,158,11,0.14);">🔥</div>
+        <h4>Discipline Streaks</h4>
+        <p>Pick a habit you're trying to break, like late-night orders or weekend splurges, and Q counts the days since you last slipped.</p>
+        <div class="feature-visual"><span class="streak-pill"><span class="flame">🌙</span> 12 Days · Late Night Spending</span></div>
+      </div>
+
+      <div class="feature-card glass-card reveal stagger tilt" style="--i:3">
+        <div class="feature-icon" style="background: rgba(56,189,248,0.14);">⏳</div>
+        <h4>The 24-Hour Rule</h4>
+        <p>Want something? Lock it in the Cooling Off Chamber instead of buying it right away. Still want it tomorrow? Go for it.</p>
+        <div class="feature-visual">
+          <div class="cool-timer">18h left</div>
+        </div>
+      </div>
+
+      <div class="feature-card glass-card reveal stagger tilt" style="--i:4">
+        <div class="feature-icon" style="background: rgba(139,92,246,0.14);">📦</div>
+        <h4>Subscription Leak Detection</h4>
+        <p>Finds every recurring charge quietly draining your account and adds up what they actually cost you a year.</p>
+        <div class="feature-visual persona-chip">
+          <span class="glyph">🎬</span>
+          <span class="name">₹4,320/year in subscriptions found</span>
+        </div>
+      </div>
+
+      <div class="feature-card glass-card reveal stagger tilt" style="--i:5">
+        <div class="feature-icon" style="background: rgba(16,185,129,0.14);">✦</div>
+        <h4>AI Coach, fully offline</h4>
+        <p>Ask it anything about your spending. It runs on your phone, not a server, so your data never has to leave it to get you an answer.</p>
+        <div class="feature-visual persona-chip">
+          <span class="glyph">🟢</span>
+          <span class="name">Offline Mode · 100% Private</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="modes" id="modes">
+  <div class="wrap">
+    <p class="eyebrow">Two modes</p>
+    <h2 class="reveal">Judged against a stranger's average, or your own.</h2>
+  </div>
+  <div class="mode-split">
+    <div class="mode-col strict">
+      <div class="mode-name">Strict mode</div>
+      <p>Every discretionary purchase counts. Your scores are benchmarked straight against the data, no exceptions.</p>
+    </div>
+    <div class="mode-col liberal">
+      <div class="mode-name">Liberal mode</div>
+      <p>After a purchase, Q asks: worth it? Say yes, and it's excluded from your Impulse Index for good. You define your own discipline.</p>
+    </div>
+  </div>
+</section>
+
+<section class="pricing" id="pricing">
+  <div class="wrap">
+    <p class="eyebrow">What it costs</p>
+    <h2 class="reveal">Try the whole thing free for a week.</h2>
+    <p class="sub">No lending, no cash advances, no hidden upsells. One subscription, everything unlocked, cancel from your phone's settings any time.</p>
+
+    <div class="price-card glass-card-heavy reveal tilt">
+      <div class="card-eyebrow">Q Pro</div>
+
+      <div class="plan-toggle" id="planToggle">
+        <button type="button" class="active" data-plan="monthly" id="btnMonthly">Monthly</button>
+        <button type="button" data-plan="yearly" id="btnYearly">Yearly <span class="save-badge">Save 16%</span></button>
+        <div class="thumb" id="planThumb"></div>
+      </div>
+
+      <div class="price-tag"><span class="amt" id="priceAmt">₹99</span><span class="per" id="pricePer">/ month</span></div>
+      <p class="price-yearly-note" id="priceYearlyNote">Billed as ₹999 once a year, works out to about ₹83/month</p>
+      <div class="price-trial">✓ First 7 days free, no charge until day 8</div>
+      <ul class="price-list">
+        <li>Full behavioral score suite (Discipline, Impulse, Volatility, Savings Rate)</li>
+        <li>Financial Persona + 30-Day Behavior Map</li>
+        <li>Liberal Mode — train your own impulse model</li>
+        <li>Discipline Streaks + the 24-Hour Rule</li>
+        <li>Subscription leak detection</li>
+        <li>AI Coach, running fully offline</li>
+        <li>Monthly Wrap, shareable</li>
+      </ul>
+      <a href="#waitlist" class="btn btn-primary" style="width:100%; justify-content:center;">Start free trial</a>
+    </div>
+  </div>
+</section>
+
+<section class="roi">
+  <div class="wrap">
+    <p class="eyebrow">The math</p>
+    <div class="roi-card glass-card-heavy reveal tilt">
+      <span class="roi-badge">✓ The math checks out</span>
+      <div class="roi-stat">
+        <span class="num">5×</span>
+        <span class="num-label">return, minimum</span>
+      </div>
+      <h2>Pays for itself.<br><span class="win">Five times over.</span></h2>
+      <p>Q Pro costs <span class="num">₹99</span> a month. Stop yourself from just <span class="num">one</span> impulsive <span class="num">₹500</span> late-night order and it's already worth five times what you paid for it. No ads, no lending, no selling your data. Just fewer 2 AM regrets.</p>
+    </div>
+  </div>
+</section>
+
+<section class="faq" id="faq">
+  <div class="wrap">
+    <p class="eyebrow">Before you ask</p>
+    <h2 class="reveal">FAQs</h2>
+    <div>
+      <details>
+        <summary>Why does Q need my SMS?<span class="icon">+</span></summary>
+        <p>Q reads bank transaction alerts automatically, so you never log an expense by hand. Granting access is required for the app to work; there's no manual-entry fallback if you say no.</p>
+      </details>
+      <details>
+        <summary>Is my data actually private?<span class="icon">+</span></summary>
+        <p>Only messages from verified bank sender IDs get read. Personal texts and OTPs are never touched. The AI Coach runs its analysis on your phone, so your spending questions don't have to leave it to get answered.</p>
+      </details>
+      <details>
+        <summary>Why Android only?<span class="icon">+</span></summary>
+        <p>Automatic SMS reading depends on an Android-specific permission that iOS doesn't expose to any app. iOS support would need a different, bank-integration-based approach, which isn't built yet.</p>
+      </details>
+      <details>
+        <summary>What happens after the free trial?<span class="icon">+</span></summary>
+        <p>You're billed ₹99/month (or ₹999/year on the annual plan) starting day 8, cancellable any time from your phone's subscription settings. No charge happens without you actively starting the trial first.</p>
+      </details>
+      <details>
+        <summary>When can I download it?<span class="icon">+</span></summary>
+        <p>Q is in active development. Join the waitlist and you'll be first to know when Android access opens.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="final-cta" id="waitlist">
+  <div class="wrap final-cta-inner">
+    <h2 class="reveal">Be first to know why you spend.</h2>
+    <p>Q launches on Android first. Leave your email and we'll let you know the moment it's ready, plus give you early access to the 7-day trial.</p>
+    <form class="wl" onsubmit="return handleWaitlist(event)">
+      <input type="email" required placeholder="you@email.com" aria-label="Email address">
+      <button type="submit" class="btn btn-primary">Notify me</button>
+    </form>
+    <p class="wl-confirm" id="wlConfirm">You're on the list. We'll be in touch before launch.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="logo">Q</div>
+      <div class="foot-links">
+        <a href="#features">Features</a>
+        <a href="#modes">How it works</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+      </div>
+    </div>
+    <p class="disclaimer">
+      Q is currently in development and is not yet available on Google Play. This page describes
+      the planned product and reflects its current feature set; details may change before launch.
+      Pricing shown is illustrative and subject to change. The waitlist form on this page is not yet
+      connected to a live backend.
+    </p>
+  </div>
+</footer>
+
+<script>
+  function handleWaitlist(e) {
+    e.preventDefault();
+    // Placeholder only -- wire this to a real waitlist table (e.g. a
+    // Supabase table) before real use.
+    document.getElementById('wlConfirm').classList.add('show');
+    e.target.reset();
+    return false;
+  }
+
+  // Build the mini heatmap (30 cells) with a few "impulsive" (red) and
+  // "normal" (blue) days scattered in, matching the real app's heatmap
+  // color logic: no-spend = faint gray, normal spend = blue, impulsive = red.
+  const heatmapEl = document.getElementById('miniHeatmap');
+  const pattern = [0,1,0,0,2,0,1,0,0,0,1,0,2,0,0,1,1,0,0,2,0,0,1,0,0,0,2,1,0,0];
+  pattern.forEach((v) => {
+    const cell = document.createElement('div');
+    if (v === 1) cell.style.background = 'rgba(56,189,248,0.35)';
+    else if (v === 2) cell.style.background = 'var(--danger)';
+    heatmapEl.appendChild(cell);
+  });
+
+  // Scroll-reveal for headlines and the hero phone (triggers the meter
+  // fill animations via the .in-view class)
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        entry.target.classList.add('in-view');
+      }
+    });
+  }, { threshold: 0.2 });
+  document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+
+  // Pricing: Monthly (₹99/mo) vs Yearly (₹999/yr) toggle
+  const btnMonthly = document.getElementById('btnMonthly');
+  const btnYearly = document.getElementById('btnYearly');
+  const planThumb = document.getElementById('planThumb');
+  const priceAmt = document.getElementById('priceAmt');
+  const pricePer = document.getElementById('pricePer');
+  const yearlyNote = document.getElementById('priceYearlyNote');
+
+  function setPlan(plan) {
+    const isYearly = plan === 'yearly';
+    btnMonthly.classList.toggle('active', !isYearly);
+    btnYearly.classList.toggle('active', isYearly);
+    planThumb.classList.toggle('shift', isYearly);
+    priceAmt.style.opacity = '0';
+    setTimeout(() => {
+      priceAmt.textContent = isYearly ? '₹999' : '₹99';
+      pricePer.textContent = isYearly ? '/ year' : '/ month';
+      priceAmt.style.opacity = '1';
+    }, 120);
+    yearlyNote.classList.toggle('show', isYearly);
+  }
+  btnMonthly.addEventListener('click', () => setPlan('monthly'));
+  btnYearly.addEventListener('click', () => setPlan('yearly'));
+
+  // Explicit smooth-scroll for every in-page anchor link (Features, How it
+  // works, Pricing, FAQ, Join the waitlist, etc.), with an offset so the
+  // target section doesn't land hidden under the fixed header.
+  document.querySelectorAll('a[href^="#"]').forEach((link) => {
+    link.addEventListener('click', (e) => {
+      const id = link.getAttribute('href').slice(1);
+      const target = document.getElementById(id);
+      if (!target) return;
+      e.preventDefault();
+      const headerOffset = 84;
+      const top = target.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+      window.scrollTo({ top, behavior: 'smooth' });
+    });
+  });
+
+  // Header background transition on scroll + top progress bar
+  const header = document.getElementById('siteHeader');
+  const progress = document.getElementById('scrollProgress');
+  function onScroll() {
+    header.classList.toggle('scrolled', window.scrollY > 12);
+    const h = document.documentElement;
+    const pct = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+    progress.style.width = pct + '%';
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Subtle cursor-reactive glow within the hero section only
+  const heroSection = document.getElementById('heroSection');
+  const cursorGlow = document.getElementById('cursorGlow');
+  const finePointer = window.matchMedia('(pointer: fine)').matches;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (finePointer) {
+    heroSection.addEventListener('mousemove', (e) => {
+      const rect = heroSection.getBoundingClientRect();
+      cursorGlow.style.setProperty('--x', (e.clientX - rect.left) + 'px');
+      cursorGlow.style.setProperty('--y', (e.clientY - rect.top) + 'px');
+    });
+  }
+
+  // 3D pointer-tracking tilt on cards ("3D touch" micro-interaction)
+  if (finePointer && !reduceMotion) {
+    document.querySelectorAll('.tilt').forEach((card) => {
+      card.addEventListener('mousemove', (e) => {
+        const r = card.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - 0.5;
+        const py = (e.clientY - r.top) / r.height - 0.5;
+        const rx = (py * -9).toFixed(2);
+        const ry = (px * 11).toFixed(2);
+        card.style.transition = 'transform 0.1s ease-out';
+        card.style.transform = `perspective(800px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-6px) scale(1.015)`;
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transition = 'transform 0.6s var(--ease-swish)';
+        card.style.transform = '';
+      });
+    });
+  }
+
+  // Parallax drift on the two background orbs, tied to scroll position
+  const orbWrapA = document.getElementById('orbWrapA');
+  const orbWrapB = document.getElementById('orbWrapB');
+  if (!reduceMotion) {
+    let ticking = false;
+    function updateParallax() {
+      const y = window.scrollY;
+      orbWrapA.style.transform = `translateY(${y * 0.1}px)`;
+      orbWrapB.style.transform = `translateY(${y * -0.08}px)`;
+      ticking = false;
+    }
+    window.addEventListener('scroll', () => {
+      if (!ticking) { requestAnimationFrame(updateParallax); ticking = true; }
+    }, { passive: true });
+    updateParallax();
+  }
+</script>
+</body>
+</html>
