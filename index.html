@@ -5,25 +5,40 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Q — Know why you spend, not just where.</title>
 <meta name="description" content="Q reads your bank SMS privately on your device and turns your spending into a behavioral profile: scores, streaks, a financial persona, and an AI coach that runs 100% offline.">
+<meta name="theme-color" content="#47201C">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2347201C'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='38' font-weight='700' fill='%23FBF3E8' text-anchor='middle'%3EQ%3C/text%3E%3C/svg%3E">
+
+<!-- Social preview: replace url/image below once this is hosted at a real domain -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Q — Know why you spend, not just where.">
+<meta property="og:description" content="Q reads your bank SMS privately on your device and turns your spending into a behavioral profile: scores, streaks, a financial persona, and an AI coach that runs 100% offline.">
+<meta property="og:site_name" content="Q">
+<!-- <meta property="og:url" content="https://REPLACE_WITH_YOUR_DOMAIN"> -->
+<!-- <meta property="og:image" content="https://REPLACE_WITH_YOUR_DOMAIN/og-image.png"> -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Q — Know why you spend, not just where.">
+<meta name="twitter:description" content="Reads your bank SMS on-device and turns your spending into scores, streaks, a financial persona, and an offline AI coach.">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    /* Exact tokens from the real app's C{} object */
-    --bg: #080808;
-    --glass: rgba(255,255,255,0.05);
-    --glass-strong: rgba(255,255,255,0.08);
-    --glass-highlight: rgba(255,255,255,0.22);
-    --border: rgba(255,255,255,0.10);
-    --border-strong: rgba(255,255,255,0.14);
-    --text-primary: #FFFFFF;
-    --text-secondary: #9A9AA0;
-    --accent: #38BDF8;
-    --success: #10B981;
-    --warning: #F59E0B;
-    --danger: #EF4444;
-    --purple: #8B5CF6;
+    /* Warm, editorial palette */
+    --bg: #FBF3E8;
+    --bg-alt: #F3E3CE;
+    --card: #FFFDF8;
+    --border: rgba(71,32,28,0.14);
+    --border-strong: rgba(71,32,28,0.24);
+    --ink: #241512;
+    --ink-soft: #7C5C50;
+    --rust: #8A3324;
+    --rust-deep: #47201C;
+    --amber: #DD8A4B;
+    --success: #5E7A3F;
+    --warning: #B9701F;
+    --danger: #A63A2C;
+    --plum: #6B3B4A;
     --display: 'Bricolage Grotesque', sans-serif;
     --body: 'Inter', sans-serif;
     --mono: 'IBM Plex Mono', monospace;
@@ -34,39 +49,40 @@
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
-    margin: 0; background: var(--bg); color: var(--text-primary);
+    margin: 0; background: var(--bg); color: var(--ink);
     font-family: var(--body); line-height: 1.55; -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
   }
   img, svg { max-width: 100%; display: block; }
   a { color: inherit; text-decoration: none; }
-  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  :focus-visible { outline: 2px solid var(--rust); outline-offset: 3px; }
   .wrap { max-width: 1160px; margin: 0 auto; padding: 0 28px; }
   @media (max-width: 640px) { .wrap { padding: 0 20px; } }
 
   /* anchored sections shouldn't hide under the fixed header on jump */
-  #features, #modes, #pricing, #faq, #waitlist { scroll-margin-top: 88px; }
+  #features, #modes, #pricing, #faq, #feedback { scroll-margin-top: 88px; }
 
-  h1, h2, h3 { font-family: var(--display); font-weight: 600; letter-spacing: -0.02em; margin: 0; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 600; letter-spacing: -0.02em; margin: 0; color: var(--ink); }
 
-  /* ---------- Two drifting bright spots (fixed, behind everything, always visible) ---------- */
+  /* ---------- A field of drifting warm light blooms (fixed, behind everything, always visible) ---------- */
   .orb-wrap {
     position: fixed; inset: 0; z-index: -1; pointer-events: none;
     transition: transform 0.1s linear;
   }
   .orb {
     position: absolute; border-radius: 50%;
-    filter: blur(10px);
+    filter: blur(14px);
+    width: var(--s, 200px); height: var(--s, 200px);
+    top: var(--t, auto); left: var(--l, auto); right: var(--r, auto); bottom: var(--b, auto);
+    animation: var(--anim, driftA) var(--dur, 22s) ease-in-out var(--delay, 0s) infinite;
   }
-  .orb-a {
-    width: 280px; height: 280px; top: 6%; left: 8%; animation: driftA 22s ease-in-out infinite;
-    background: radial-gradient(circle at 42% 38%, rgba(240,249,255,1) 0%, rgba(186,230,253,0.9) 14%, rgba(125,211,252,0.55) 30%, rgba(56,189,248,0.18) 48%, transparent 65%);
-    box-shadow: 0 0 90px 20px rgba(125,211,252,0.35);
+  .orb--amber {
+    background: radial-gradient(circle at 42% 38%, rgba(255,241,218,0.95) 0%, rgba(238,175,112,0.68) 16%, rgba(221,138,75,0.38) 34%, rgba(138,51,36,0.12) 52%, transparent 68%);
+    box-shadow: 0 0 90px 26px rgba(221,138,75,0.26);
   }
-  .orb-b {
-    width: 230px; height: 230px; bottom: 10%; right: 10%; animation: driftB 19s ease-in-out infinite;
-    background: radial-gradient(circle at 42% 38%, rgba(224,238,255,1) 0%, rgba(147,197,253,0.9) 14%, rgba(59,130,246,0.55) 30%, rgba(37,99,235,0.18) 48%, transparent 65%);
-    box-shadow: 0 0 90px 20px rgba(59,130,246,0.3);
+  .orb--rust {
+    background: radial-gradient(circle at 42% 38%, rgba(255,230,220,0.95) 0%, rgba(200,110,90,0.65) 16%, rgba(138,51,36,0.38) 34%, rgba(71,32,28,0.13) 52%, transparent 68%);
+    box-shadow: 0 0 90px 26px rgba(138,51,36,0.2);
   }
   @keyframes driftA {
     0%   { transform: translate(0,0) rotate(0deg) scale(1); }
@@ -82,16 +98,22 @@
     80%  { transform: translate(-170px, -50px) rotate(-10deg) scale(1.08); }
     100% { transform: translate(0,0) rotate(0deg) scale(1); }
   }
+  @keyframes driftC {
+    0%   { transform: translate(0,0) scale(1); }
+    33%  { transform: translate(-110px, 130px) scale(1.12); }
+    66%  { transform: translate(120px, 90px) scale(0.9); }
+    100% { transform: translate(0,0) scale(1); }
+  }
   @media (prefers-reduced-motion: reduce) {
-    .orb-a, .orb-b { animation: none; }
+    .orb { animation: none; }
   }
 
   /* ---------- Scroll progress bar ---------- */
   .scroll-progress {
     position: fixed; top: 0; left: 0; height: 2px; width: 0%;
-    background: linear-gradient(90deg, var(--accent), var(--purple));
+    background: linear-gradient(90deg, var(--rust), var(--amber));
     z-index: 200; transition: width 0.1s linear;
-    box-shadow: 0 0 12px rgba(56,189,248,0.6);
+    box-shadow: 0 0 12px rgba(138,51,36,0.4);
   }
 
   .reveal {
@@ -106,53 +128,52 @@
 
   .eyebrow {
     font-family: var(--mono); font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.14em;
-    color: var(--accent); margin: 0 0 16px; display: flex; align-items: center; gap: 8px; font-weight: 600;
+    color: var(--rust); margin: 0 0 16px; display: flex; align-items: center; gap: 8px; font-weight: 600;
   }
-  .eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); animation: pulseDot 2.2s ease-in-out infinite; }
+  .eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--rust); box-shadow: 0 0 8px rgba(138,51,36,0.5); animation: pulseDot 2.2s ease-in-out infinite; }
   @keyframes pulseDot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.75); } }
 
-  /* ---------- Real "glass card" system, ported directly from RN styles ---------- */
+  /* ---------- Warm paper-card system ---------- */
   .glass-card {
-    background: var(--glass); border: 1px solid var(--border); border-top-color: var(--glass-highlight);
-    border-radius: 22px; box-shadow: 0 10px 18px rgba(0,0,0,0.28);
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 22px; box-shadow: 0 10px 26px rgba(71,32,28,0.08);
     transition: transform 0.55s var(--ease-swish), border-color 0.4s var(--ease-soft), box-shadow 0.5s var(--ease-soft), background 0.4s var(--ease-soft);
   }
   .glass-card:hover {
     transform: translateY(-6px);
     border-color: var(--border-strong);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.06);
-    background: var(--glass-strong);
+    box-shadow: 0 26px 50px rgba(71,32,28,0.14);
   }
   .glass-card-heavy {
-    background: var(--glass-strong); border: 1px solid var(--border-strong); border-top-color: var(--glass-highlight);
-    border-radius: 26px; box-shadow: 0 12px 22px rgba(0,0,0,0.32);
+    background: var(--card); border: 1px solid var(--border-strong);
+    border-radius: 26px; box-shadow: 0 14px 32px rgba(71,32,28,0.1);
     transition: box-shadow 0.5s var(--ease-soft), transform 0.55s var(--ease-swish);
   }
-  .glass-card-heavy:hover { box-shadow: 0 24px 48px rgba(0,0,0,0.4), 0 0 40px rgba(56,189,248,0.08); }
-  .card-eyebrow { color: var(--text-secondary); font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 16px; font-family: var(--mono); }
+  .glass-card-heavy:hover { box-shadow: 0 30px 60px rgba(71,32,28,0.16); }
+  .card-eyebrow { color: var(--ink-soft); font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 16px; font-family: var(--mono); }
 
   /* ---------- Nav ---------- */
   header {
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    background: rgba(8,8,8,0.6); backdrop-filter: blur(14px);
+    background: rgba(251,243,232,0.6); backdrop-filter: blur(14px);
     border-bottom: 1px solid transparent;
     transition: background 0.4s var(--ease-soft), border-color 0.4s var(--ease-soft);
   }
-  header.scrolled { background: rgba(8,8,8,0.82); border-bottom-color: var(--border); }
+  header.scrolled { background: rgba(251,243,232,0.9); border-bottom-color: var(--border); }
   nav.wrap { display: flex; align-items: center; justify-content: space-between; height: 68px; }
   .logo {
     font-family: var(--display); font-weight: 800; font-size: 22px; letter-spacing: -0.01em;
-    color: var(--accent); text-shadow: 0 0 20px rgba(56,189,248,0.5);
+    color: var(--rust);
     transition: opacity 0.3s var(--ease-soft);
   }
-  .navlinks { display: none; gap: 32px; font-size: 14px; color: var(--text-secondary); }
+  .navlinks { display: none; gap: 32px; font-size: 14px; color: var(--ink-soft); }
   @media (min-width: 860px) { .navlinks { display: flex; } }
   .navlinks a { position: relative; padding-bottom: 3px; transition: color 0.3s var(--ease-soft); }
   .navlinks a::after {
     content: ""; position: absolute; left: 0; bottom: 0; width: 100%; height: 1px;
-    background: var(--accent); transform: scaleX(0); transform-origin: right; transition: transform 0.4s var(--ease-swish);
+    background: var(--rust); transform: scaleX(0); transform-origin: right; transition: transform 0.4s var(--ease-swish);
   }
-  .navlinks a:hover { color: var(--text-primary); }
+  .navlinks a:hover { color: var(--ink); }
   .navlinks a:hover::after { transform: scaleX(1); transform-origin: left; }
 
   .btn {
@@ -168,108 +189,154 @@
     transform: translateX(-120%); transition: transform 0.65s var(--ease);
   }
   .btn:hover::before { transform: translateX(120%); }
-  .btn-primary { background: var(--accent); color: #001018; box-shadow: 0 6px 16px rgba(56,189,248,0.3); }
-  .btn-primary:hover { filter: brightness(1.08); transform: translateY(-2px); box-shadow: 0 10px 26px rgba(56,189,248,0.42); }
+  .btn-primary { background: var(--rust); color: #FFF7EE; box-shadow: 0 8px 20px rgba(138,51,36,0.32); }
+  .btn-primary:hover { filter: brightness(1.08); transform: translateY(-2px); box-shadow: 0 12px 28px rgba(138,51,36,0.42); }
   .btn-primary:active { transform: translateY(0); }
-  .btn-ghost { background: transparent; color: var(--text-primary); border-color: var(--border); }
-  .btn-ghost:hover { border-color: var(--border-strong); transform: translateY(-2px); background: rgba(255,255,255,0.03); }
+  .btn-ghost { background: transparent; color: var(--ink); border-color: var(--border-strong); }
+  .btn-ghost:hover { border-color: var(--rust); transform: translateY(-2px); background: rgba(138,51,36,0.05); }
   .btn:active { transform: scale(0.96) translateY(0); transition: transform 0.15s ease-out; }
 
   /* ---------- Hero ---------- */
   .hero { padding: 152px 0 100px; position: relative; overflow: hidden; }
   .hero::before {
     content: ""; position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
-    width: 900px; height: 500px; background: radial-gradient(circle, rgba(56,189,248,0.12) 0%, transparent 70%);
+    width: 900px; height: 500px; background: radial-gradient(circle, rgba(221,138,75,0.16) 0%, transparent 70%);
     pointer-events: none;
   }
   .cursor-glow {
     position: absolute; width: 480px; height: 480px; border-radius: 50%; pointer-events: none;
-    background: radial-gradient(circle, rgba(139,92,246,0.14) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(107,59,74,0.1) 0%, transparent 70%);
     transform: translate(-50%, -50%); left: var(--x, 50%); top: var(--y, 30%);
     transition: left 0.5s var(--ease-soft), top 0.5s var(--ease-soft); z-index: 0;
   }
-  .hero-grid { display: grid; gap: 56px; align-items: center; position: relative; z-index: 1; }
-  @media (min-width: 940px) { .hero-grid { grid-template-columns: 1.05fr 0.95fr; } }
+  .hero-center { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; text-align: center; display: flex; flex-direction: column; align-items: center; }
+  .hero-center .hero-ctas { justify-content: center; }
+  .hero-center .trust-row { justify-content: center; }
+
+  .phone-reveal { padding-top: 90px; padding-bottom: 60px; }
+  .phone-reveal-heading { text-align: center; max-width: 640px; margin: 0 auto 8px; }
+  .phone-reveal-heading h2 { font-size: clamp(1.8rem, 4.2vw, 2.6rem); margin-bottom: 14px; }
+  .phone-reveal-heading p { color: var(--ink-soft); font-size: 15.5px; max-width: 46ch; margin: 0 auto; }
   .hero h1 { font-size: clamp(2.3rem, 5.4vw, 3.6rem); line-height: 1.05; }
   .hero h1 .accent {
-    background: linear-gradient(100deg, var(--accent), #7dd3fc 40%, var(--purple));
+    background: linear-gradient(100deg, var(--rust), var(--amber) 45%, var(--plum));
     -webkit-background-clip: text; background-clip: text; color: transparent;
     background-size: 200% 100%; animation: gradientDrift 6s ease-in-out infinite;
   }
   @keyframes gradientDrift { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
-  .hero p.lead { font-size: 18px; color: var(--text-secondary); max-width: 48ch; margin: 24px 0 32px; }
+  .hero p.lead { font-size: 18px; color: var(--ink-soft); max-width: 48ch; margin: 24px 0 32px; }
   .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 28px; }
-  .trust-row { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 12.5px; color: var(--text-secondary); }
+  .trust-row { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 12.5px; color: var(--ink-soft); }
   .trust-row span::before { content: "\2713"; color: var(--success); margin-right: 6px; font-weight: 700; }
 
-  /* ---------- Phone mockup: the signature element ---------- */
-  .phone {
-    width: 340px; max-width: 88vw; margin: 0 auto; border-radius: 30px; position: relative; z-index: 1;
-    background: linear-gradient(165deg, rgba(22,22,26,0.82), rgba(8,8,10,0.78));
-    -webkit-backdrop-filter: blur(28px) saturate(150%);
-    backdrop-filter: blur(28px) saturate(150%);
-    border: 1px solid var(--border-strong); border-top-color: var(--glass-highlight);
-    box-shadow: 0 50px 110px rgba(0,0,0,0.75), 0 20px 45px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04) inset;
-    padding: 30px 26px 26px;
-    transition: transform 0.65s var(--ease-swish), box-shadow 0.6s var(--ease-soft);
+  .scroll-cue {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    margin: 56px auto 0; width: fit-content; position: relative; z-index: 1;
+    color: var(--ink-soft); transition: color 0.3s var(--ease-soft);
+    animation: cueBounce 2.2s ease-in-out infinite;
   }
-  .phone:hover {
-    transform: perspective(900px) rotateY(-3deg) rotateX(1.5deg) translateY(-12px);
-    box-shadow: 0 60px 130px rgba(0,0,0,0.8), 0 0 80px rgba(56,189,248,0.16), 0 0 0 1px rgba(255,255,255,0.07) inset;
+  .scroll-cue:hover { color: var(--rust); }
+  .scroll-cue-label { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; }
+  @keyframes cueBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(8px); }
   }
-  .phone-inner { margin-top: 4px; }
-  .phone-label { font-family: var(--mono); font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px; }
+  @media (prefers-reduced-motion: reduce) { .scroll-cue { animation: none; } }
 
-  /* Wellness ring, real SVG matching CircularScoreCard's stroke-dashoffset logic */
-  .wellness-ring-wrap { display: flex; align-items: center; gap: 18px; margin-bottom: 18px; }
-  .ring-svg { transform: rotate(-90deg); }
-  .ring-track { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 8; }
-  .ring-fill {
-    fill: none; stroke: var(--accent); stroke-width: 8; stroke-linecap: round;
-    stroke-dasharray: 251; stroke-dashoffset: 251;
-    animation: fillRing 1.4s var(--ease) forwards; animation-delay: 0.4s;
-    filter: drop-shadow(0 0 8px rgba(56,189,248,0.6));
+  /* ---------- Data card: the signature element ---------- */
+  /* ---------- Scroll-scrubbed phone: pins in place while the score builds as you scroll ---------- */
+  .phone-scroll-wrap { position: relative; height: 115vh; }
+  .phone-sticky { position: sticky; top: 110px; display: flex; justify-content: center; }
+  @media (max-width: 639px) {
+    .phone-scroll-wrap { height: auto; }
+    .phone-sticky { position: static; }
   }
-  @keyframes fillRing { to { stroke-dashoffset: 63; } }
+
+  .phone-frame {
+    width: 300px; max-width: 82vw; margin: 0 auto; position: relative; z-index: 1;
+    background: linear-gradient(160deg, #3A2F2A, #17120F);
+    border-radius: 46px; padding: 12px;
+    box-shadow: 0 40px 90px rgba(71,32,28,0.22), 0 16px 34px rgba(71,32,28,0.14), 0 0 0 1px rgba(0,0,0,0.35) inset;
+    transition: transform 0.08s linear, box-shadow 0.6s var(--ease-soft);
+    transform-style: preserve-3d;
+  }
+  .phone-frame:hover {
+    box-shadow: 0 56px 120px rgba(71,32,28,0.28), 0 0 60px rgba(221,138,75,0.22), 0 0 0 1px rgba(0,0,0,0.4) inset;
+  }
+  .phone-btn {
+    position: absolute; background: linear-gradient(90deg, #17120F, #3A2F2A); border-radius: 3px; z-index: 0;
+  }
+  .phone-btn.power { right: -3px; top: 130px; width: 3px; height: 66px; }
+  .phone-btn.vol-up { left: -3px; top: 100px; width: 3px; height: 40px; }
+  .phone-btn.vol-down { left: -3px; top: 150px; width: 3px; height: 40px; }
+  .phone-notch {
+    position: absolute; top: 12px; left: 50%; transform: translateX(-50%); z-index: 3;
+    width: 88px; height: 22px; background: #0B0807; border-radius: 14px;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+  }
+  .phone-screen {
+    background: linear-gradient(165deg, #FFFDF8, #FBF0E4);
+    border-radius: 36px; padding: 34px 22px 20px; position: relative; overflow: hidden;
+    min-height: 560px; display: flex; flex-direction: column;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.5), inset 0 1px 3px rgba(0,0,0,0.08);
+    transition: filter 0.1s linear;
+  }
+  .phone-home-indicator {
+    position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); z-index: 3;
+    width: 120px; height: 4px; border-radius: 4px; background: rgba(71,32,28,0.22);
+  }
+  .phone-glare {
+    position: absolute; inset: 0; pointer-events: none; z-index: 4; mix-blend-mode: overlay; opacity: 0.5;
+    background: linear-gradient(115deg, rgba(255,255,255,0.4) 0%, transparent 26%, transparent 68%, rgba(255,255,255,0.12) 100%);
+  }
+  .phone-status {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 10.5px; color: var(--ink-soft); opacity: 0.6; margin-bottom: 16px;
+  }
+  .phone-inner { margin-top: 4px; transition: opacity 0.15s linear; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+  .phone-label { font-family: var(--mono); font-size: 10px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px; }
+
   .ring-center { position: relative; width: 84px; height: 84px; }
   .ring-num { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .ring-num .n { font-family: var(--display); font-size: 24px; font-weight: 700; }
-  .ring-num .l { font-family: var(--mono); font-size: 8px; color: var(--text-secondary); text-transform: uppercase; }
+  .ring-num .n { font-family: var(--display); font-size: 24px; font-weight: 700; color: var(--ink); }
+  .ring-num .l { font-family: var(--mono); font-size: 8px; color: var(--ink-soft); text-transform: uppercase; }
+
+  /* Wellness ring */
+  .wellness-ring-wrap { display: flex; align-items: center; gap: 18px; margin-bottom: 18px; }
+  .ring-svg { transform: rotate(-90deg); }
+  .ring-track { fill: none; stroke: rgba(71,32,28,0.1); stroke-width: 8; }
+  .ring-fill {
+    fill: none; stroke: var(--rust); stroke-width: 8; stroke-linecap: round;
+    transition: stroke-dashoffset 0.1s linear;
+    filter: drop-shadow(0 0 8px rgba(138,51,36,0.4));
+  }
 
   .meter { margin-bottom: 12px; }
   .meter-row { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 5px; }
-  .meter-row .lbl { color: var(--text-secondary); }
-  .meter-row .val { color: var(--text-primary); font-weight: 600; font-family: var(--mono); }
-  .meter-bg { height: 6px; border-radius: 999px; background: rgba(255,255,255,0.05); overflow: hidden; }
-  .meter-fill { height: 100%; border-radius: 999px; width: 0; transition: width 1.3s var(--ease); position: relative; }
+  .meter-row .lbl { color: var(--ink-soft); }
+  .meter-row .val { color: var(--ink); font-weight: 600; font-family: var(--mono); }
+  .meter-bg { height: 6px; border-radius: 999px; background: rgba(71,32,28,0.08); overflow: hidden; }
+  .meter-fill { height: 100%; border-radius: 999px; width: 0; transition: width 0.15s linear; position: relative; }
   .meter-fill::after {
     content: ""; position: absolute; inset: 0; border-radius: inherit;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
     transform: translateX(-100%); animation: sheen 2.4s ease-in-out 1.6s infinite;
   }
   @keyframes sheen { 0% { transform: translateX(-100%); } 40%, 100% { transform: translateX(220%); } }
   .meter-fill.discipline { background: var(--success); }
   .meter-fill.impulse { background: var(--warning); }
-  .meter-fill.volatility { background: var(--purple); }
-  .meter-fill.savings { background: var(--accent); }
-  .in-view .meter-fill.discipline { width: 78%; }
-  .in-view .meter-fill.impulse { width: 34%; }
-  .in-view .meter-fill.volatility { width: 41%; }
-  .in-view .meter-fill.savings { width: 63%; }
+  .meter-fill.volatility { background: var(--plum); }
+  .meter-fill.savings { background: var(--rust); }
 
-  @media (prefers-reduced-motion: reduce) {
-    .ring-fill { animation: none; stroke-dashoffset: 63; }
-    .meter-fill, .meter-fill::after { transition: none; animation: none; }
-  }
 
   /* ---------- Statement section ---------- */
   .statement { padding: 120px 0; border-top: 1px solid var(--border); }
   .statement h2 { font-size: clamp(1.9rem, 4.6vw, 2.8rem); line-height: 1.15; max-width: 20ch; }
-  .statement .dim { color: var(--text-secondary); font-weight: 500; }
+  .statement .dim { color: var(--ink-soft); font-weight: 500; }
   .statement-row { display: grid; gap: 40px; margin-top: 56px; }
   @media (min-width: 780px) { .statement-row { grid-template-columns: 1fr 1fr; } }
   .statement-row h4 { font-family: var(--display); font-size: 19px; margin: 0 0 10px; }
-  .statement-row p { color: var(--text-secondary); font-size: 15px; margin: 0; max-width: 42ch; }
+  .statement-row p { color: var(--ink-soft); font-size: 15px; margin: 0; max-width: 42ch; }
 
   /* ---------- Feature showcase ---------- */
   .features { padding: 120px 0; border-top: 1px solid var(--border); }
@@ -283,35 +350,35 @@
     transition: transform 0.5s var(--ease-swish);
   }
   .feature-card:hover .feature-icon { transform: scale(1.12) rotate(-6deg); }
-  .feature-card h4 { font-family: var(--display); font-size: 17px; margin: 0; }
-  .feature-card p { color: var(--text-secondary); font-size: 13.5px; margin: 0; line-height: 1.55; }
+  .feature-card h4 { font-family: var(--display); font-size: 17px; margin: 0; color: var(--ink); }
+  .feature-card p { color: var(--ink-soft); font-size: 13.5px; margin: 0; line-height: 1.55; }
   .feature-visual { margin-top: 6px; }
 
   /* mini persona chip visual */
   .persona-chip {
     display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 14px;
-    background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+    background: var(--bg-alt); border: 1px solid var(--border);
     transition: border-color 0.35s var(--ease-soft), background 0.35s var(--ease-soft);
   }
-  .feature-card:hover .persona-chip { border-color: var(--border-strong); background: rgba(255,255,255,0.05); }
+  .feature-card:hover .persona-chip { border-color: var(--border-strong); }
   .persona-chip .glyph { font-size: 22px; }
-  .persona-chip .name { font-size: 13px; font-weight: 700; }
+  .persona-chip .name { font-size: 13px; font-weight: 700; color: var(--ink); }
 
   /* mini heatmap visual */
   .mini-heatmap { display: grid; grid-template-columns: repeat(10, 1fr); gap: 3px; }
-  .mini-heatmap div { aspect-ratio: 1; border-radius: 3px; background: rgba(255,255,255,0.05); transition: transform 0.4s var(--ease-swish); }
+  .mini-heatmap div { aspect-ratio: 1; border-radius: 3px; background: rgba(71,32,28,0.08); transition: transform 0.4s var(--ease-swish); }
   .mini-heatmap div:hover { transform: scale(1.25); }
 
   /* mini streak visual */
   .streak-pill {
     display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 980px;
-    background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); font-size: 12.5px; font-weight: 700; color: var(--warning);
+    background: rgba(185,112,31,0.12); border: 1px solid rgba(185,112,31,0.32); font-size: 12.5px; font-weight: 700; color: var(--warning);
   }
   .streak-pill .flame { display: inline-block; animation: flicker 1.8s ease-in-out infinite; }
   @keyframes flicker { 0%, 100% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.15) rotate(-4deg); } }
 
   /* mini cooling-off visual */
-  .cool-timer { font-family: var(--mono); font-size: 26px; font-weight: 600; color: var(--accent); text-shadow: 0 0 16px rgba(56,189,248,0.45); animation: glowPulse 2.6s ease-in-out infinite; }
+  .cool-timer { font-family: var(--mono); font-size: 26px; font-weight: 600; color: var(--rust); text-shadow: 0 0 14px rgba(138,51,36,0.25); animation: glowPulse 2.6s ease-in-out infinite; }
   @keyframes glowPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
 
   /* ---------- Mode split ---------- */
@@ -321,100 +388,99 @@
   @media (min-width: 780px) { .mode-split { grid-template-columns: 1fr 1fr; } }
   .mode-col { padding: 44px 38px; transition: background 0.4s var(--ease-soft); }
   .mode-col.strict { border-right: 1px solid var(--border); }
-  .mode-col.liberal { background: var(--glass-strong); }
-  .mode-col:hover { background: rgba(255,255,255,0.06); }
-  .mode-col .mode-name { font-family: var(--display); font-size: 24px; font-weight: 600; margin-bottom: 14px; }
-  .mode-col p { color: var(--text-secondary); font-size: 14.5px; margin: 0; max-width: 40ch; }
+  .mode-col.liberal { background: var(--bg-alt); }
+  .mode-col:hover { background: rgba(138,51,36,0.05); }
+  .mode-col .mode-name { font-family: var(--display); font-size: 24px; font-weight: 600; margin-bottom: 14px; color: var(--ink); }
+  .mode-col p { color: var(--ink-soft); font-size: 14.5px; margin: 0; max-width: 40ch; }
 
   /* ---------- Pricing ---------- */
   .pricing { padding: 120px 0; border-top: 1px solid var(--border); }
   .pricing h2 { font-size: clamp(1.9rem, 4.6vw, 2.8rem); max-width: 20ch; }
-  .pricing p.sub { color: var(--text-secondary); font-size: 15.5px; margin: 16px 0 56px; max-width: 52ch; }
+  .pricing p.sub { color: var(--ink-soft); font-size: 15.5px; margin: 16px 0 56px; max-width: 52ch; }
   .price-card { padding: 40px; max-width: 460px; }
 
   .plan-toggle {
     display: flex; align-items: stretch; width: 304px; max-width: 100%; padding: 4px; border-radius: 980px;
-    background: rgba(255,255,255,0.04); border: 1px solid var(--border); margin-bottom: 24px; position: relative;
+    background: var(--bg-alt); border: 1px solid var(--border); margin-bottom: 24px; position: relative;
   }
   .plan-toggle button {
     position: relative; z-index: 1; border: none; background: transparent; cursor: pointer;
     flex: 1 1 50%; min-width: 0; white-space: nowrap;
-    font-family: var(--body); font-weight: 600; font-size: 13.5px; color: var(--text-secondary);
+    font-family: var(--body); font-weight: 600; font-size: 13.5px; color: var(--ink-soft);
     padding: 9px 10px; border-radius: 980px; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
     transition: color 0.3s var(--ease-soft);
   }
-  .plan-toggle button.active { color: #001018; }
+  .plan-toggle button.active { color: #FFF7EE; }
   .plan-toggle .thumb {
     position: absolute; top: 4px; left: 4px; height: calc(100% - 8px); width: calc(50% - 4px);
-    background: var(--accent); border-radius: 980px; transition: transform 0.45s var(--ease-swish);
-    box-shadow: 0 4px 14px rgba(56,189,248,0.35); transform: translateX(0);
+    background: var(--rust); border-radius: 980px; transition: transform 0.45s var(--ease-swish);
+    box-shadow: 0 4px 14px rgba(138,51,36,0.35); transform: translateX(0);
   }
   .plan-toggle .thumb.shift { transform: translateX(100%); }
   .save-badge {
     font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--success);
-    background: rgba(16,185,129,0.14); border: 1px solid rgba(16,185,129,0.3);
+    background: rgba(94,122,63,0.14); border: 1px solid rgba(94,122,63,0.32);
     padding: 2px 6px; border-radius: 980px; letter-spacing: 0.01em; white-space: nowrap; flex-shrink: 0;
   }
   .plan-toggle button:not(.active) .save-badge { opacity: 0.75; }
 
   .price-tag { display: flex; align-items: baseline; gap: 8px; margin: 20px 0 8px; }
-  .price-tag .amt { font-family: var(--display); font-size: 44px; font-weight: 700; transition: opacity 0.25s var(--ease-soft); }
-  .price-tag .per { color: var(--text-secondary); font-size: 14px; }
+  .price-tag .amt { font-family: var(--display); font-size: 44px; font-weight: 700; transition: opacity 0.25s var(--ease-soft); color: var(--ink); }
+  .price-tag .per { color: var(--ink-soft); font-size: 14px; }
   .price-trial { font-family: var(--mono); font-size: 12.5px; color: var(--success); margin-bottom: 28px; }
-  .price-yearly-note { font-family: var(--mono); font-size: 12px; color: var(--text-secondary); margin: -20px 0 20px; display: none; }
+  .price-yearly-note { font-family: var(--mono); font-size: 12px; color: var(--ink-soft); margin: -20px 0 20px; display: none; }
   .price-yearly-note.show { display: block; }
   .price-list { list-style: none; margin: 0 0 32px; padding: 0; display: flex; flex-direction: column; gap: 13px; }
-  .price-list li { display: flex; gap: 10px; font-size: 14px; color: var(--text-primary); align-items: flex-start; transition: transform 0.35s var(--ease-swish); }
+  .price-list li { display: flex; gap: 10px; font-size: 14px; color: var(--ink); align-items: flex-start; transition: transform 0.35s var(--ease-swish); }
   .price-list li:hover { transform: translateX(4px); }
   .price-list li::before { content: "\2713"; color: var(--success); font-weight: 700; flex-shrink: 0; }
 
-  /* ---------- Testimonials ---------- */
   /* ---------- ROI ---------- */
   .roi { padding: 120px 0; border-top: 1px solid var(--border); }
   .roi-card {
     text-align: center; padding: 64px 44px 52px; max-width: 720px; margin: 0 auto; position: relative; overflow: visible;
-    background: linear-gradient(165deg, rgba(16,185,129,0.09), rgba(255,255,255,0.06));
-    border-color: rgba(16,185,129,0.3);
-    box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 60px rgba(16,185,129,0.1);
+    background: linear-gradient(165deg, rgba(94,122,63,0.07), #FFFDF8);
+    border-color: rgba(94,122,63,0.32);
+    box-shadow: 0 30px 70px rgba(71,32,28,0.12), 0 0 50px rgba(94,122,63,0.08);
   }
   .roi-card::before {
     content: ""; position: absolute; top: -40%; left: 50%; transform: translateX(-50%);
-    width: 560px; height: 340px; background: radial-gradient(circle, rgba(16,185,129,0.22) 0%, transparent 70%);
+    width: 560px; height: 340px; background: radial-gradient(circle, rgba(94,122,63,0.16) 0%, transparent 70%);
     pointer-events: none;
   }
   .roi-card::after {
     content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
-    border: 1.5px solid rgba(16,185,129,0.55);
+    border: 1.5px solid rgba(94,122,63,0.5);
     animation: roiPulse 2.8s ease-in-out infinite;
   }
   @keyframes roiPulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.35); opacity: 0.65; }
-    50% { box-shadow: 0 0 34px 4px rgba(16,185,129,0.3); opacity: 1; }
+    0%, 100% { box-shadow: 0 0 0 0 rgba(94,122,63,0.3); opacity: 0.65; }
+    50% { box-shadow: 0 0 34px 4px rgba(94,122,63,0.25); opacity: 1; }
   }
   @media (prefers-reduced-motion: reduce) { .roi-card::after { animation: none; } }
 
   .roi-badge {
     position: absolute; top: -16px; left: 50%; transform: translateX(-50%); z-index: 2;
     display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
-    background: var(--success); color: #04140e; font-family: var(--mono); font-weight: 700; font-size: 11px;
+    background: var(--success); color: #FBF9F2; font-family: var(--mono); font-weight: 700; font-size: 11px;
     text-transform: uppercase; letter-spacing: 0.08em; padding: 7px 16px; border-radius: 980px;
-    box-shadow: 0 6px 20px rgba(16,185,129,0.45);
+    box-shadow: 0 6px 18px rgba(94,122,63,0.4);
   }
 
   .roi-stat { position: relative; display: flex; flex-direction: column; align-items: center; margin-bottom: 6px; }
   .roi-stat .num {
     font-family: var(--display); font-weight: 800; font-size: clamp(4.2rem, 12vw, 6.4rem); line-height: 0.9;
-    color: var(--success); letter-spacing: -0.03em; text-shadow: 0 0 50px rgba(16,185,129,0.5);
+    color: var(--success); letter-spacing: -0.03em; text-shadow: 0 0 40px rgba(94,122,63,0.3);
   }
   .roi-stat .num-label {
-    font-family: var(--mono); font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-secondary);
+    font-family: var(--mono); font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--ink-soft);
     margin-top: 2px;
   }
 
   .roi-card h2 { font-size: clamp(1.5rem, 3.4vw, 2rem); margin: 18px 0 16px; position: relative; }
   .roi-card .win { color: var(--success); }
-  .roi-card p { color: var(--text-secondary); font-size: 15.5px; max-width: 50ch; margin: 0 auto; position: relative; line-height: 1.6; }
-  .roi-card p .num { font-family: var(--mono); color: var(--text-primary); font-weight: 600; }
+  .roi-card p { color: var(--ink-soft); font-size: 15.5px; max-width: 50ch; margin: 0 auto; position: relative; line-height: 1.6; }
+  .roi-card p .num { font-family: var(--mono); color: var(--ink); font-weight: 600; }
 
   /* ---------- FAQ ---------- */
   .faq { padding: 120px 0; border-top: 1px solid var(--border); }
@@ -424,57 +490,63 @@
   summary {
     font-family: var(--display); font-weight: 600; font-size: 16.5px; cursor: pointer; list-style: none;
     display: flex; justify-content: space-between; align-items: center; gap: 20px;
-    transition: color 0.3s var(--ease-soft);
+    transition: color 0.3s var(--ease-soft); color: var(--ink);
   }
-  summary:hover { color: var(--accent); }
+  summary:hover { color: var(--rust); }
   summary::-webkit-details-marker { display: none; }
   summary .icon {
-    font-size: 20px; color: var(--text-secondary); font-weight: 300; flex-shrink: 0;
+    font-size: 20px; color: var(--ink-soft); font-weight: 300; flex-shrink: 0;
     display: inline-flex; width: 22px; height: 22px; align-items: center; justify-content: center;
     transition: transform 0.45s var(--ease-swish);
   }
-  details[open] summary .icon { transform: rotate(135deg); color: var(--accent); }
+  details[open] summary .icon { transform: rotate(135deg); color: var(--rust); }
   details p {
-    color: var(--text-secondary); font-size: 14px; margin: 14px 0 0; max-width: 62ch;
+    color: var(--ink-soft); font-size: 14px; margin: 14px 0 0; max-width: 62ch;
     animation: faqFade 0.4s var(--ease-soft);
   }
   @keyframes faqFade { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
 
   /* ---------- Final CTA ---------- */
-  .final-cta { padding: 130px 0; text-align: center; border-top: 1px solid var(--border); position: relative; overflow: hidden; }
+  .final-cta { padding: 130px 0; text-align: center; border-top: 1px solid var(--border); position: relative; overflow: hidden; background: var(--rust-deep); }
   .final-cta::before {
     content: ""; position: absolute; bottom: -200px; left: 50%; transform: translateX(-50%);
-    width: 900px; height: 500px; background: radial-gradient(circle, rgba(56,189,248,0.1) 0%, transparent 70%);
+    width: 900px; height: 500px; background: radial-gradient(circle, rgba(221,138,75,0.28) 0%, transparent 70%);
     pointer-events: none; animation: floatOrb 8s ease-in-out infinite;
   }
   @keyframes floatOrb { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, -20px); } }
   .final-cta-inner { position: relative; z-index: 1; }
-  .final-cta h2 { font-size: clamp(2rem, 5.2vw, 3.2rem); margin-bottom: 18px; }
-  .final-cta p { color: var(--text-secondary); font-size: 16px; max-width: 46ch; margin: 0 auto 34px; }
-  form.wl { display: flex; gap: 10px; max-width: 420px; margin: 0 auto; flex-wrap: wrap; justify-content: center; }
-  form.wl input[type="email"] {
-    flex: 1; min-width: 220px; border: 1px solid var(--border); border-radius: 980px; padding: 13px 20px;
-    font-family: var(--body); font-size: 14.5px; background: rgba(255,255,255,0.04); color: var(--text-primary);
-    transition: border-color 0.3s var(--ease-soft), background 0.3s var(--ease-soft);
-  }
-  form.wl input[type="email"]:focus { border-color: var(--accent); background: rgba(255,255,255,0.06); }
-  form.wl input::placeholder { color: var(--text-secondary); }
-  .wl-confirm { display: none; font-family: var(--mono); font-size: 13px; color: var(--success); margin-top: 16px; opacity: 0; transition: opacity 0.4s var(--ease-soft); }
-  .wl-confirm.show { display: block; opacity: 1; }
+  .final-cta h2 { font-size: clamp(2rem, 5.2vw, 3.2rem); margin-bottom: 18px; color: #FBF3E8; }
+  .final-cta p { color: rgba(251,243,232,0.72); font-size: 16px; max-width: 46ch; margin: 0 auto 34px; }
+  .final-cta .btn-primary { background: #FBF3E8; color: var(--rust-deep); box-shadow: 0 10px 26px rgba(0,0,0,0.3); }
+  .final-cta .btn-primary:hover { filter: none; background: #fff; }
 
   /* ---------- Footer ---------- */
   footer { border-top: 1px solid var(--border); padding: 48px 0 32px; }
   .foot-grid { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 28px; margin-bottom: 32px; }
-  .foot-links { display: flex; gap: 26px; font-size: 14px; color: var(--text-secondary); }
+  .foot-links { display: flex; gap: 26px; font-size: 14px; color: var(--ink-soft); }
   .foot-links a { transition: color 0.3s var(--ease-soft); }
-  .foot-links a:hover { color: var(--text-primary); }
-  .disclaimer { font-family: var(--mono); font-size: 11px; color: var(--text-secondary); line-height: 1.7; max-width: 78ch; }
+  .foot-links a:hover { color: var(--ink); }
+  .disclaimer { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); line-height: 1.7; max-width: 78ch; }
 </style>
 </head>
 <body>
 
-<div class="orb-wrap" id="orbWrapA"><div class="orb orb-a"></div></div>
-<div class="orb-wrap" id="orbWrapB"><div class="orb orb-b"></div></div>
+<div class="orb-wrap" data-speed="0.10"><div class="orb orb--amber" style="--s:320px; --t:2%; --l:4%; --anim:driftA; --dur:22s;"></div></div>
+<div class="orb-wrap" data-speed="-0.08"><div class="orb orb--rust" style="--s:260px; --b:8%; --r:6%; --anim:driftB; --dur:19s;"></div></div>
+<div class="orb-wrap" data-speed="0.06"><div class="orb orb--amber" style="--s:190px; --t:40%; --l:36%; --anim:driftC; --dur:27s;"></div></div>
+<div class="orb-wrap" data-speed="-0.12"><div class="orb orb--rust" style="--s:150px; --t:14%; --r:20%; --anim:driftA; --dur:17s; --delay:2s;"></div></div>
+<div class="orb-wrap" data-speed="0.14"><div class="orb orb--amber" style="--s:220px; --b:20%; --l:10%; --anim:driftB; --dur:24s; --delay:3s;"></div></div>
+<div class="orb-wrap" data-speed="-0.09"><div class="orb orb--rust" style="--s:130px; --t:26%; --l:78%; --anim:driftC; --dur:20s; --delay:1s;"></div></div>
+<div class="orb-wrap" data-speed="0.11"><div class="orb orb--amber" style="--s:170px; --b:36%; --l:58%; --anim:driftA; --dur:26s; --delay:4s;"></div></div>
+<div class="orb-wrap" data-speed="-0.07"><div class="orb orb--rust" style="--s:100px; --t:66%; --l:18%; --anim:driftB; --dur:16s; --delay:2.5s;"></div></div>
+<div class="orb-wrap" data-speed="0.08"><div class="orb orb--amber" style="--s:140px; --t:6%; --l:38%; --anim:driftC; --dur:23s; --delay:1.5s;"></div></div>
+<div class="orb-wrap" data-speed="-0.13"><div class="orb orb--rust" style="--s:110px; --b:4%; --l:42%; --anim:driftA; --dur:18s; --delay:3.5s;"></div></div>
+<div class="orb-wrap" data-speed="0.15"><div class="orb orb--amber" style="--s:200px; --t:56%; --r:4%; --anim:driftB; --dur:25s; --delay:0.5s;"></div></div>
+<div class="orb-wrap" data-speed="-0.06"><div class="orb orb--rust" style="--s:90px; --t:36%; --l:2%; --anim:driftC; --dur:15s; --delay:2s;"></div></div>
+<div class="orb-wrap" data-speed="0.09"><div class="orb orb--amber" style="--s:160px; --t:82%; --r:36%; --anim:driftA; --dur:21s; --delay:1.2s;"></div></div>
+<div class="orb-wrap" data-speed="-0.11"><div class="orb orb--rust" style="--s:120px; --t:4%; --r:42%; --anim:driftB; --dur:19s; --delay:3.2s;"></div></div>
+<div class="orb-wrap" data-speed="0.13"><div class="orb orb--amber" style="--s:180px; --b:44%; --r:14%; --anim:driftC; --dur:24s; --delay:2.8s;"></div></div>
+<div class="orb-wrap" data-speed="-0.10"><div class="orb orb--rust" style="--s:105px; --b:12%; --l:70%; --anim:driftA; --dur:17s; --delay:1.8s;"></div></div>
 <div class="scroll-progress" id="scrollProgress"></div>
 
 <header id="siteHeader">
@@ -486,64 +558,87 @@
       <a href="#pricing">Pricing</a>
       <a href="#faq">FAQ</a>
     </div>
-    <a href="#waitlist" class="btn btn-primary">Join the waitlist</a>
+    <a href="#feedback" class="btn btn-primary">Share your thoughts</a>
   </nav>
 </header>
 
 <section class="hero" id="heroSection">
   <div class="cursor-glow" id="cursorGlow"></div>
-  <div class="wrap hero-grid">
-    <div>
-      <p class="eyebrow">Reads your bank SMS on-device, nothing leaves your phone</p>
-      <h1>Your bank statement knows why you spend.<br><span class="accent">Q actually tells you.</span></h1>
-      <p class="lead">It reads every transaction that hits your account and builds an actual picture of how you spend, not just a list of amounts. Scores, streaks, a persona, and an AI coach that runs offline.</p>
-      <div class="hero-ctas">
-        <a href="#waitlist" class="btn btn-primary">Join the waitlist</a>
-        <a href="#features" class="btn btn-ghost">See what it does</a>
-      </div>
-      <div class="trust-row">
-        <span>7-day free trial</span>
-        <span>AI Coach runs offline</span>
-        <span>No lending, ever</span>
-      </div>
+  <div class="wrap hero-center">
+    <p class="eyebrow">Reads your bank SMS on-device, nothing leaves your phone</p>
+    <h1>Your bank statement knows why you spend.<br><span class="accent">Q actually tells you.</span></h1>
+    <p class="lead">It reads every transaction that hits your account and builds an actual picture of how you spend, not just a list of amounts. Scores, streaks, a persona, and an AI coach that runs offline.</p>
+    <div class="hero-ctas">
+      <a href="#feedback" class="btn btn-primary">Share your thoughts</a>
+      <a href="#features" class="btn btn-ghost">See what it does</a>
     </div>
+    <div class="trust-row">
+      <span>7-day free trial</span>
+      <span>AI Coach runs offline</span>
+      <span>No lending, ever</span>
+    </div>
+  </div>
+  <a href="#phoneReveal" class="scroll-cue" aria-label="Scroll to see how it works">
+    <span class="scroll-cue-label">See it in action</span>
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 5l6 6 6-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </a>
+</section>
 
-    <div class="phone reveal" id="heroPhone">
-      <div class="phone-inner">
+<section class="phone-reveal" id="phoneReveal">
+  <div class="wrap phone-reveal-heading">
+    <p class="eyebrow" style="justify-content:center;">Keep scrolling</p>
+    <h2>Watch your score come together.</h2>
+    <p>Every transaction gets weighed the moment it happens. This is what that looks like on your lock screen.</p>
+  </div>
+  <div class="phone-scroll-wrap">
+  <div class="phone-sticky">
+  <div class="phone-frame" id="heroPhone">
+    <span class="phone-btn power"></span>
+    <span class="phone-btn vol-up"></span>
+    <span class="phone-btn vol-down"></span>
+    <div class="phone-notch"></div>
+    <div class="phone-screen" id="phoneScreen">
+      <div class="phone-glare"></div>
+      <div class="phone-home-indicator"></div>
+      <div class="phone-status"><span>9:41</span><span class="dots">●●●</span></div>
+      <div class="phone-inner" id="phoneContent">
         <div class="phone-label">Financial Wellness</div>
         <div class="wellness-ring-wrap">
           <div class="ring-center">
             <svg class="ring-svg" width="84" height="84" viewBox="0 0 84 84">
               <circle class="ring-track" cx="42" cy="42" r="40"></circle>
-              <circle class="ring-fill" cx="42" cy="42" r="40"></circle>
+              <circle class="ring-fill" id="ringFill" cx="42" cy="42" r="40" stroke-dasharray="251" stroke-dashoffset="251"></circle>
             </svg>
             <div class="ring-num"><span class="n">75</span><span class="l">Score</span></div>
           </div>
           <div style="flex:1;">
             <div class="meter">
               <div class="meter-row"><span class="lbl">Discipline</span><span class="val">78/100</span></div>
-              <div class="meter-bg"><div class="meter-fill discipline"></div></div>
+              <div class="meter-bg"><div class="meter-fill discipline" data-target="78"></div></div>
             </div>
             <div class="meter">
               <div class="meter-row"><span class="lbl">Impulse</span><span class="val">34/100</span></div>
-              <div class="meter-bg"><div class="meter-fill impulse"></div></div>
+              <div class="meter-bg"><div class="meter-fill impulse" data-target="34"></div></div>
             </div>
           </div>
         </div>
         <div class="meter">
           <div class="meter-row"><span class="lbl">Volatility</span><span class="val">41/100</span></div>
-          <div class="meter-bg"><div class="meter-fill volatility"></div></div>
+          <div class="meter-bg"><div class="meter-fill volatility" data-target="41"></div></div>
         </div>
         <div class="meter">
           <div class="meter-row"><span class="lbl">Savings Rate</span><span class="val">63/100</span></div>
-          <div class="meter-bg"><div class="meter-fill savings"></div></div>
-        </div>
+        <div class="meter-bg"><div class="meter-fill savings" data-target="63"></div></div>
+      </div>
       </div>
     </div>
+  </div>
+  </div>
   </div>
 </section>
 
 <section class="statement">
+
   <div class="wrap">
     <p class="eyebrow">Not another expense tracker</p>
     <h2 class="reveal">It studies how <span class="dim">you</span> actually spend.</h2>
@@ -567,7 +662,14 @@
     <div class="feature-grid">
 
       <div class="feature-card glass-card reveal stagger tilt" style="--i:0">
-        <div class="feature-icon" style="background: rgba(56,189,248,0.14);">⚖️</div>
+        <div class="feature-icon" style="background: rgba(138,51,36,0.14); color: #8A3324;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="16" rx="3"/>
+            <circle cx="9" cy="10.3" r="2.2"/>
+            <path d="M5.6 16.8c.6-2.1 2.2-3.2 3.4-3.2s2.8 1.1 3.4 3.2"/>
+            <path d="M15 9h4M15 12.3h4M15 15.6h2.3"/>
+          </svg>
+        </div>
         <h4>Financial Persona</h4>
         <p>Your spending pattern gets turned into an identity: The Midnight Impulser, The Stealth Saver, The Weekend Warrior. Based on what you actually do, not a quiz.</p>
         <div class="feature-visual persona-chip">
@@ -577,21 +679,35 @@
       </div>
 
       <div class="feature-card glass-card reveal stagger tilt" style="--i:1">
-        <div class="feature-icon" style="background: rgba(239,68,68,0.14);">🗺️</div>
+        <div class="feature-icon" style="background: rgba(166,58,44,0.14); color: #A63A2C;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="3"/>
+            <path d="M3 9h18M3 15h18M9 3v18M15 3v18"/>
+          </svg>
+        </div>
         <h4>30-Day Behavior Map</h4>
         <p>A heatmap of your last 30 days. Every square colored by how much you spent and whether it looked impulsive, the kind of pattern you'd never spot in a list.</p>
         <div class="feature-visual mini-heatmap" id="miniHeatmap"></div>
       </div>
 
       <div class="feature-card glass-card reveal stagger tilt" style="--i:2">
-        <div class="feature-icon" style="background: rgba(245,158,11,0.14);">🔥</div>
+        <div class="feature-icon" style="background: rgba(185,112,31,0.16); color: #B9701F;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12.3 2.2c.7 3-2.6 4.4-2.9 7.6a3.1 3.1 0 0 0 6.2.4c.9.9 1.4 2.2 1.4 3.6a5 5 0 1 1-10 0c0-4.6 3.6-6 5.3-11.6z"/>
+          </svg>
+        </div>
         <h4>Discipline Streaks</h4>
         <p>Pick a habit you're trying to break, like late-night orders or weekend splurges, and Q counts the days since you last slipped.</p>
         <div class="feature-visual"><span class="streak-pill"><span class="flame">🌙</span> 12 Days · Late Night Spending</span></div>
       </div>
 
       <div class="feature-card glass-card reveal stagger tilt" style="--i:3">
-        <div class="feature-icon" style="background: rgba(56,189,248,0.14);">⏳</div>
+        <div class="feature-icon" style="background: rgba(221,138,75,0.18); color: #DD8A4B;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M7 3h10M7 21h10"/>
+            <path d="M8 3c0 4.3 2.6 5.8 4 7.6-1.4 1.8-4 3.3-4 7.4M16 3c0 4.3-2.6 5.8-4 7.6 1.4 1.8 4 3.3 4 7.4"/>
+          </svg>
+        </div>
         <h4>The 24-Hour Rule</h4>
         <p>Want something? Lock it in the Cooling Off Chamber instead of buying it right away. Still want it tomorrow? Go for it.</p>
         <div class="feature-visual">
@@ -600,7 +716,11 @@
       </div>
 
       <div class="feature-card glass-card reveal stagger tilt" style="--i:4">
-        <div class="feature-icon" style="background: rgba(139,92,246,0.14);">📦</div>
+        <div class="feature-icon" style="background: rgba(107,59,74,0.14); color: #6B3B4A;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 3.2s6 7.3 6 11.3a6 6 0 1 1-12 0c0-4 6-11.3 6-11.3z"/>
+          </svg>
+        </div>
         <h4>Subscription Leak Detection</h4>
         <p>Finds every recurring charge quietly draining your account and adds up what they actually cost you a year.</p>
         <div class="feature-visual persona-chip">
@@ -610,7 +730,11 @@
       </div>
 
       <div class="feature-card glass-card reveal stagger tilt" style="--i:5">
-        <div class="feature-icon" style="background: rgba(16,185,129,0.14);">✦</div>
+        <div class="feature-icon" style="background: rgba(94,122,63,0.14); color: #5E7A3F;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2.5l2 5.5 5.5 2-5.5 2-2 5.5-2-5.5L4.5 10l5.5-2 2-5.5z"/>
+          </svg>
+        </div>
         <h4>AI Coach, fully offline</h4>
         <p>Ask it anything about your spending. It runs on your phone, not a server, so your data never has to leave it to get you an answer.</p>
         <div class="feature-visual persona-chip">
@@ -667,7 +791,7 @@
         <li>AI Coach, running fully offline</li>
         <li>Monthly Wrap, shareable</li>
       </ul>
-      <a href="#waitlist" class="btn btn-primary" style="width:100%; justify-content:center;">Start free trial</a>
+      <a href="#feedback" class="btn btn-primary" style="width:100%; justify-content:center;">Start free trial</a>
     </div>
   </div>
 </section>
@@ -710,21 +834,17 @@
       </details>
       <details>
         <summary>When can I download it?<span class="icon">+</span></summary>
-        <p>Q is in active development. Join the waitlist and you'll be first to know when Android access opens.</p>
+        <p>Q is in active development. Share your thoughts above and we'll factor it into what gets built next.</p>
       </details>
     </div>
   </div>
 </section>
 
-<section class="final-cta" id="waitlist">
+<section class="final-cta" id="feedback">
   <div class="wrap final-cta-inner">
-    <h2 class="reveal">Be first to know why you spend.</h2>
-    <p>Q launches on Android first. Leave your email and we'll let you know the moment it's ready, plus give you early access to the 7-day trial.</p>
-    <form class="wl" onsubmit="return handleWaitlist(event)">
-      <input type="email" required placeholder="you@email.com" aria-label="Email address">
-      <button type="submit" class="btn btn-primary">Notify me</button>
-    </form>
-    <p class="wl-confirm" id="wlConfirm">You're on the list. We'll be in touch before launch.</p>
+    <h2 class="reveal">Tell us what you think.</h2>
+    <p>Q is still being built. If you've got two minutes, tell us what would actually make this useful to you, no email required.</p>
+    <a href="https://forms.gle/REPLACE_WITH_YOUR_FORM" target="_blank" rel="noopener" class="btn btn-primary">Share your thoughts</a>
   </div>
 </section>
 
@@ -742,21 +862,14 @@
     <p class="disclaimer">
       Q is currently in development and is not yet available on Google Play. This page describes
       the planned product and reflects its current feature set; details may change before launch.
-      Pricing shown is illustrative and subject to change. The waitlist form on this page is not yet
-      connected to a live backend.
+      Pricing shown is illustrative and subject to change. The feedback link on this page opens an
+      external Google Form.
     </p>
   </div>
 </footer>
 
 <script>
-  function handleWaitlist(e) {
-    e.preventDefault();
-    // Placeholder only -- wire this to a real waitlist table (e.g. a
-    // Supabase table) before real use.
-    document.getElementById('wlConfirm').classList.add('show');
-    e.target.reset();
-    return false;
-  }
+
 
   // Build the mini heatmap (30 cells) with a few "impulsive" (red) and
   // "normal" (blue) days scattered in, matching the real app's heatmap
@@ -765,13 +878,12 @@
   const pattern = [0,1,0,0,2,0,1,0,0,0,1,0,2,0,0,1,1,0,0,2,0,0,1,0,0,0,2,1,0,0];
   pattern.forEach((v) => {
     const cell = document.createElement('div');
-    if (v === 1) cell.style.background = 'rgba(56,189,248,0.35)';
+    if (v === 1) cell.style.background = 'rgba(221,138,75,0.45)';
     else if (v === 2) cell.style.background = 'var(--danger)';
     heatmapEl.appendChild(cell);
   });
 
-  // Scroll-reveal for headlines and the hero phone (triggers the meter
-  // fill animations via the .in-view class)
+  // Scroll-reveal for headlines and section entrances
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
@@ -807,7 +919,7 @@
   btnYearly.addEventListener('click', () => setPlan('yearly'));
 
   // Explicit smooth-scroll for every in-page anchor link (Features, How it
-  // works, Pricing, FAQ, Join the waitlist, etc.), with an offset so the
+  // works, Pricing, FAQ, Share your thoughts, etc.), with an offset so the
   // target section doesn't land hidden under the fixed header.
   document.querySelectorAll('a[href^="#"]').forEach((link) => {
     link.addEventListener('click', (e) => {
@@ -866,15 +978,16 @@
     });
   }
 
-  // Parallax drift on the two background orbs, tied to scroll position
-  const orbWrapA = document.getElementById('orbWrapA');
-  const orbWrapB = document.getElementById('orbWrapB');
+  // Parallax drift on the background orb field, tied to scroll position
+  const orbWraps = Array.from(document.querySelectorAll('.orb-wrap'));
   if (!reduceMotion) {
     let ticking = false;
     function updateParallax() {
       const y = window.scrollY;
-      orbWrapA.style.transform = `translateY(${y * 0.1}px)`;
-      orbWrapB.style.transform = `translateY(${y * -0.08}px)`;
+      orbWraps.forEach((el) => {
+        const speed = parseFloat(el.dataset.speed || '0');
+        el.style.transform = `translateY(${y * speed}px)`;
+      });
       ticking = false;
     }
     window.addEventListener('scroll', () => {
@@ -882,6 +995,88 @@
     }, { passive: true });
     updateParallax();
   }
+
+  // Scroll-scrubbed phone: tilts open, then the wellness score builds up,
+  // both driven directly by how far you've scrolled through the pinned section.
+  const phoneScrollWrap = document.querySelector('.phone-scroll-wrap');
+  const phoneFrame = document.getElementById('heroPhone');
+  const phoneScreen = document.getElementById('phoneScreen');
+  const phoneContent = document.getElementById('phoneContent');
+  const ringFillEl = document.getElementById('ringFill');
+  const meterFillEls = phoneFrame ? Array.from(phoneFrame.querySelectorAll('.meter-fill')) : [];
+  const RING_CIRCUMFERENCE = 251;
+  const desktopScrub = window.matchMedia('(min-width: 640px)').matches;
+
+  // base = driven by scroll progress; hover = small extra offset from pointer position.
+  // Rendered together so hovering never fights the scroll animation.
+  let phoneBase = { tiltDeg: -24, scale: 0.88, liftPx: 22 };
+  let phoneHover = { rx: 0, ry: 0 };
+
+  function renderPhoneTransform() {
+    const rx = phoneHover.rx;
+    const ry = phoneBase.tiltDeg + phoneHover.ry;
+    phoneFrame.style.transform =
+      `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg) scale(${phoneBase.scale}) translateY(${phoneBase.liftPx}px)`;
+  }
+
+  function applyPhoneProgress(p) {
+    const openP = Math.min(1, p / 0.35);
+    const fillP = Math.max(0, Math.min(1, (p - 0.35) / 0.65));
+
+    phoneBase.tiltDeg = (1 - openP) * -24;
+    phoneBase.scale = 0.88 + openP * 0.12;
+    phoneBase.liftPx = (1 - openP) * 22;
+    renderPhoneTransform();
+
+    phoneScreen.style.filter = `brightness(${0.5 + openP * 0.5})`;
+    phoneContent.style.opacity = String(Math.max(openP * 0.35, fillP));
+
+    ringFillEl.style.strokeDashoffset = String(RING_CIRCUMFERENCE - fillP * (RING_CIRCUMFERENCE - 63));
+    meterFillEls.forEach((el) => {
+      const target = parseFloat(el.dataset.target || '0');
+      el.style.width = (fillP * target) + '%';
+    });
+  }
+
+  if (phoneScrollWrap && phoneFrame && desktopScrub && !reduceMotion) {
+    // Start visibly "closed" before any scrubbing happens
+    applyPhoneProgress(0);
+    let scrubTicking = false;
+    function updatePhoneScrub() {
+      const rect = phoneScrollWrap.getBoundingClientRect();
+      const total = phoneScrollWrap.offsetHeight - window.innerHeight;
+      const raw = -rect.top / Math.max(total, 1);
+      applyPhoneProgress(Math.max(0, Math.min(1, raw)));
+      scrubTicking = false;
+    }
+    window.addEventListener('scroll', () => {
+      if (!scrubTicking) { requestAnimationFrame(updatePhoneScrub); scrubTicking = true; }
+    }, { passive: true });
+    window.addEventListener('resize', updatePhoneScrub);
+    updatePhoneScrub();
+  } else if (phoneFrame) {
+    // Mobile / reduced-motion: just show the finished, fully "open" card
+    applyPhoneProgress(1);
+  }
+
+  // Small hover tilt layered on top, so the phone still feels responsive to
+  // the pointer even after (or before) the scroll sequence has played out.
+  if (phoneFrame && finePointer && !reduceMotion) {
+    phoneFrame.addEventListener('mousemove', (e) => {
+      const r = phoneFrame.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width - 0.5;
+      const py = (e.clientY - r.top) / r.height - 0.5;
+      phoneHover.rx = (py * -6);
+      phoneHover.ry = (px * 7);
+      renderPhoneTransform();
+    });
+    phoneFrame.addEventListener('mouseleave', () => {
+      phoneHover.rx = 0;
+      phoneHover.ry = 0;
+      renderPhoneTransform();
+    });
+  }
 </script>
+
 </body>
 </html>
