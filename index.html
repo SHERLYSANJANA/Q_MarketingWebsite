@@ -44,7 +44,7 @@
     --ease-swish: cubic-bezier(0.34, 1.56, 0.64, 1);
   }
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; overflow-x: hidden; overflow-x: clip; }
   body {
     margin: 0; background: var(--bg); color: var(--ink);
     font-family: var(--body); line-height: 1.55; -webkit-font-smoothing: antialiased;
@@ -182,7 +182,8 @@
   .menu-toggle.open span:nth-child(2) { width: 20px; opacity: 0; transform: translateX(-6px); }
   .menu-toggle.open span:nth-child(3) { width: 20px; transform: translateY(-7px) rotate(-45deg); }
   @media (min-width: 860px) { .menu-toggle { display: none; } }
-  @media (max-width: 859px) { .menu-toggle { display: inline-flex; } }
+  @media (max-width: 859px) { .navlinks { display: none; }
+    .menu-toggle { display: inline-flex; } }
 
   .mobile-menu {
     display: grid; grid-template-rows: 0fr; opacity: 0; visibility: hidden;
@@ -573,7 +574,7 @@
 
   .roi { padding: 120px 0; border-top: 1px solid var(--border); }
   .roi-card {
-    text-align: center; padding: 64px 44px 52px; max-width: 720px; margin: 0 auto; position: relative; overflow: visible;
+    text-align: center; padding: 64px 44px 52px; max-width: 720px; margin: 0 auto; position: relative; overflow-x: clip; overflow-y: visible;
     background: linear-gradient(165deg, rgba(94,122,63,0.07), #FFFDF8);
     border-color: rgba(94,122,63,0.32);
     box-shadow: 0 30px 70px rgba(71,32,28,0.12), 0 0 50px rgba(94,122,63,0.08);
