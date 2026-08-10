@@ -302,8 +302,7 @@
   .phone-scroll-wrap { position: relative; height: 115vh; }
   .phone-sticky { position: sticky; top: 90px; display: flex; justify-content: center; }
   @media (max-width: 639px) {
-    .phone-scroll-wrap { height: auto; }
-    .phone-sticky { position: static; }
+    .phone-scroll-wrap { height: 170vh; }
   }
 
   /* ================= iPhone 15 Pro Max shell — full 3D treatment ================= */
@@ -1308,7 +1307,6 @@
   const RING_CIRCUMFERENCE = 251;
   const RING_SCORE_TARGET = 75;
   let ringLocked = false;
-  const desktopScrub = window.matchMedia('(min-width: 640px)').matches;
 
   // base = driven by scroll progress; hover = small extra offset from pointer position;
   // ambient = a slow, continuous sway so the metal/glass keep catching light in 3D.
@@ -1360,7 +1358,7 @@
     }
   }
 
-  if (phoneScrollWrap && phoneFrame && desktopScrub && !reduceMotion) {
+  if (phoneScrollWrap && phoneFrame && !reduceMotion) {
     applyPhoneProgress(0);
     let scrubTicking = false;
     function updatePhoneScrub() {
