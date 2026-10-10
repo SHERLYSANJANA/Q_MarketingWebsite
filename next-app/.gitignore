@@ -1,0 +1,116 @@
+# ==============================
+# Dependencies
+# ==============================
+node_modules/
+vendor/
+
+# ==============================
+# Environment Variables & Secrets
+# ==============================
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# ==============================
+# Build Output
+# ==============================
+dist/
+build/
+out/
+.next/
+.nuxt/
+.output/
+
+# ==============================
+# Logs
+# ==============================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# ==============================
+# Python
+# ==============================
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.python-version
+venv/
+.venv/
+env/
+ENV/
+
+# ==============================
+# Testing & Coverage
+# ==============================
+coverage/
+.nyc_output/
+htmlcov/
+.tox/
+.pytest_cache/
+
+# ==============================
+# IDEs & Editors
+# ==============================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ==============================
+# Operating System Files
+# ==============================
+.DS_Store
+Thumbs.db
+Desktop.ini
+.Trash-*
+.Spotlight-V100
+.Trashes
+
+# ==============================
+# Temporary Files
+# ==============================
+tmp/
+temp/
+*.tmp
+*.bak
+*.orig
+*.rej
+
+# ==============================
+# Frontend Frameworks
+# ==============================
+.svelte-kit/
+.angular/
+.parcel-cache/
+.turbo/
+
+# ==============================
+# Database & Data Files
+# ==============================
+*.sqlite
+*.sqlite3
+*.db
+
+# PostgreSQL local backups and dumps
+*.dump
+*.backup
+*.sql.bak
+
+# ==============================
+# Package Manager
+# ==============================
+.npm/
+.pnpm-store/
+
+# ==============================
+# Miscellaneous
+# ==============================
+.cache/
+*.pid
+*.seed
