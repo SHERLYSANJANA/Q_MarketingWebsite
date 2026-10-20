@@ -22,6 +22,9 @@ out/
 .next/
 .nuxt/
 .output/
+*.tsbuildinfo
+legacy_backup/
+
 
 # ==============================
 # Logs
