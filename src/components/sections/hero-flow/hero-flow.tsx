@@ -1,7 +1,12 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import { TRANSACTIONS, CATEGORIES, FORCE_METRICS, ALPHA_FORM_URL } from "../../../lib/constants";
+import {
+  TRANSACTIONS,
+  CATEGORIES,
+  FORCE_METRICS,
+  ALPHA_FORM_URL,
+} from "../../../lib/constants";
 import { clamp, smoothstep, lerp, pseudoRandom } from "../../../lib/math";
 import { useReducedMotion } from "../../../hooks/use-reduced-motion";
 import { CTAButton } from "../../ui/cta-button";
@@ -41,11 +46,15 @@ export const HeroFlow: React.FC = () => {
 
     const categoryIndices = TRANSACTIONS.map((t) => t.categoryIndex);
     const categoryCounts = [0, 0, 0, 0];
-    const categoryRanks = categoryIndices.map((catIdx) => categoryCounts[catIdx]++);
+    const categoryRanks = categoryIndices.map(
+      (catIdx) => categoryCounts[catIdx]++,
+    );
 
     const frame = (time: number) => {
       const rect = flow.getBoundingClientRect();
-      const progress = clamp(-rect.top / (flow.offsetHeight - window.innerHeight));
+      const progress = clamp(
+        -rect.top / (flow.offsetHeight - window.innerHeight),
+      );
       const isMobile = window.innerWidth < 760;
       const width = world.clientWidth;
       const height = world.clientHeight;
@@ -60,7 +69,8 @@ export const HeroFlow: React.FC = () => {
           targetT = lerp(
             keyTargets[i - 1],
             keyTargets[i],
-            (progress - keyPoints[i - 1]) / (keyPoints[i] - keyPoints[i - 1]) || 0
+            (progress - keyPoints[i - 1]) / (keyPoints[i] - keyPoints[i - 1]) ||
+              0,
           );
           break;
         }
@@ -117,16 +127,31 @@ export const HeroFlow: React.FC = () => {
         const targetGroupY = A[cat][1] * height + rk * (isMobile ? 20 : 26);
         const groupPos = [targetGroupX, targetGroupY, rk * 30, (rk - 1) * 3];
 
-        const aStep = smoothstep(clamp((currentT - pseudoRandom(i, 7) * 0.3) / 0.7));
+        const aStep = smoothstep(
+          clamp((currentT - pseudoRandom(i, 7) * 0.3) / 0.7),
+        );
         const collapseStep = smoothstep(clamp(currentT - 1));
 
-        const posX = lerp(lerp(initialPos[0], groupPos[0], aStep), ox + A[cat][0] * width, collapseStep);
-        const posY = lerp(lerp(initialPos[1], groupPos[1], aStep), A[cat][1] * height, collapseStep);
-        const posZ = lerp(lerp(initialPos[2], groupPos[2], aStep), 0, collapseStep);
+        const posX = lerp(
+          lerp(initialPos[0], groupPos[0], aStep),
+          ox + A[cat][0] * width,
+          collapseStep,
+        );
+        const posY = lerp(
+          lerp(initialPos[1], groupPos[1], aStep),
+          A[cat][1] * height,
+          collapseStep,
+        );
+        const posZ = lerp(
+          lerp(initialPos[2], groupPos[2], aStep),
+          0,
+          collapseStep,
+        );
         const rotZ = lerp(initialPos[3], groupPos[3], aStep);
         const scale = lerp(1, 0.35, collapseStep);
 
-        const opacity = (1 - smoothstep(clamp((currentT - 1.1) / 0.6))) *
+        const opacity =
+          (1 - smoothstep(clamp((currentT - 1.1) / 0.6))) *
           (0.55 + 0.45 * smoothstep(clamp((posZ + 380) / 760)));
 
         card.style.transform = `translate3d(${posX}px, ${posY}px, ${posZ}px) rotateZ(${rotZ}deg) scale(${scale})`;
@@ -136,7 +161,8 @@ export const HeroFlow: React.FC = () => {
       // Update 4 category label cards
       glCards.forEach((gl, i) => {
         const opacity =
-          smoothstep(clamp((currentT - 0.6) / 0.4)) * (1 - smoothstep(clamp((currentT - 1.2) / 0.5)));
+          smoothstep(clamp((currentT - 0.6) / 0.4)) *
+          (1 - smoothstep(clamp((currentT - 1.2) / 0.5)));
         gl.style.opacity = `${opacity}`;
         gl.style.transform = `translate3d(${ox + A[i][0] * width}px, ${A[i][1] * height - 52}px, 40px)`;
       });
@@ -171,7 +197,9 @@ export const HeroFlow: React.FC = () => {
         const yOffset = (1 - fadeIn) * 36 - (1 - fadeOut) * 30;
 
         el.style.opacity = `${op}`;
-        el.style.translate = isMobile ? `0 ${yOffset}px` : `0 calc(-50% + ${yOffset}px)`;
+        el.style.translate = isMobile
+          ? `0 ${yOffset}px`
+          : `0 calc(-50% + ${yOffset}px)`;
         el.style.pointerEvents = op > 0.5 ? "auto" : "none";
       });
 
@@ -233,7 +261,9 @@ export const HeroFlow: React.FC = () => {
 
         {/* Hero title block */}
         <div
-          ref={(el) => { titleRefs.current[0] = el; }}
+          ref={(el) => {
+            titleRefs.current[0] = el;
+          }}
           className="t"
           data-a="-1"
           data-b=".17"
@@ -244,13 +274,12 @@ export const HeroFlow: React.FC = () => {
             <span>is reading the noise</span>
           </div>
           <h1>
-            <span className="l1">Your bank statement knows what you spent.</span>
+            <span className="l1">
+              Your bank statement knows what you spent.
+            </span>
             <span className="l2" id="qk" aria-label="Q knows why.">
               {kineticText.split("").map((char, i) => (
-                <span
-                  key={i}
-                  style={{ transitionDelay: `${0.3 + i * 0.04}s` }}
-                >
+                <span key={i} style={{ transitionDelay: `${0.3 + i * 0.04}s` }}>
                   {char === " " ? "\u00A0" : char}
                 </span>
               ))}
@@ -258,7 +287,7 @@ export const HeroFlow: React.FC = () => {
           </h1>
           <p>
             Q reads your bank SMS on your phone and turns every transaction into
-            scores, streaks, a persona and an offline AI coach.
+            scores, streaks, a persona and an AI coach.
           </p>
           <div className="row">
             <CTAButton
@@ -344,7 +373,9 @@ export const HeroFlow: React.FC = () => {
 
         {/* Narrative text beats */}
         <div
-          ref={(el) => { titleRefs.current[1] = el; }}
+          ref={(el) => {
+            titleRefs.current[1] = el;
+          }}
           className="t"
           data-a=".16"
           data-b=".30"
@@ -352,7 +383,9 @@ export const HeroFlow: React.FC = () => {
           <h2>Your spending looks random.</h2>
         </div>
         <div
-          ref={(el) => { titleRefs.current[2] = el; }}
+          ref={(el) => {
+            titleRefs.current[2] = el;
+          }}
           className="t"
           data-a=".35"
           data-b=".53"
@@ -362,17 +395,22 @@ export const HeroFlow: React.FC = () => {
           </h2>
         </div>
         <div
-          ref={(el) => { titleRefs.current[3] = el; }}
+          ref={(el) => {
+            titleRefs.current[3] = el;
+          }}
           className="t"
           data-a=".53"
           data-b=".72"
         >
           <h2>
-            Q doesn&apos;t just track your money. <em>It studies your behavior.</em>
+            Q doesn&apos;t just track your money.{" "}
+            <em>It studies your behavior.</em>
           </h2>
         </div>
         <div
-          ref={(el) => { titleRefs.current[4] = el; }}
+          ref={(el) => {
+            titleRefs.current[4] = el;
+          }}
           className="t"
           data-a=".72"
           data-b="1.1"

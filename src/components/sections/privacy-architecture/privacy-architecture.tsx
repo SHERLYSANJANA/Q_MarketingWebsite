@@ -7,8 +7,8 @@ export const PrivacyArchitecture: React.FC = () => {
         Your money is private. <em>Your data should be too.</em>
       </h2>
       <p className="flow">
-        Your transactions<i>→</i>Q<i>→</i>Local analysis<i>→</i>Stays on your
-        device
+        bank SMS on your phone<i>→</i>Q reads transaction alerts<i>→</i>Scores
+        calculated on your phone<i>→</i>Data synced to your Q account
       </p>
 
       <div className="priv" style={{ marginTop: 30 }}>
@@ -17,7 +17,7 @@ export const PrivacyArchitecture: React.FC = () => {
             ✓ On device
           </div>
           <div className="g g2" style={{ gridColumn: 1 }}>
-            ✓ Verified bank SMS
+            ✓ Reads bank transaction alert
           </div>
           <div className="g g2" style={{ gridColumn: 3, gridRow: 1 }}>
             ✓ No OTP

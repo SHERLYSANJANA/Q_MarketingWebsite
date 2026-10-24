@@ -18,7 +18,7 @@ export const AIDiagnostics: React.FC = () => {
 
   const { ref: containerRef, isInView } = useInView<HTMLDivElement>(
     { threshold: 0.4 },
-    true
+    true,
   );
 
   useEffect(() => {
@@ -26,18 +26,27 @@ export const AIDiagnostics: React.FC = () => {
 
     // Reveal logs sequentially
     LOG_ITEMS.forEach((_, index) => {
-      setTimeout(() => {
-        setVisibleLogCount((prev) => Math.max(prev, index + 1));
-      }, (index + 1) * 450);
+      setTimeout(
+        () => {
+          setVisibleLogCount((prev) => Math.max(prev, index + 1));
+        },
+        (index + 1) * 450,
+      );
     });
 
-    const barsTimer = setTimeout(() => {
-      setShowBars(true);
-    }, LOG_ITEMS.length * 450 + 400);
+    const barsTimer = setTimeout(
+      () => {
+        setShowBars(true);
+      },
+      LOG_ITEMS.length * 450 + 400,
+    );
 
-    const answerTimer = setTimeout(() => {
-      setShowAnswer(true);
-    }, LOG_ITEMS.length * 450 + 1600);
+    const answerTimer = setTimeout(
+      () => {
+        setShowAnswer(true);
+      },
+      LOG_ITEMS.length * 450 + 1600,
+    );
 
     return () => {
       clearTimeout(barsTimer);
@@ -67,16 +76,8 @@ export const AIDiagnostics: React.FC = () => {
             Chatbots answer questions. Q investigates behavior.
           </p>
           <p className="lede">
-            Your financial data doesn&apos;t need to leave your phone.
+            Q checks your own spending history first, then explains it.
           </p>
-          <div className="row" style={{ marginTop: 18 }}>
-            <span className="tag" style={{ color: "var(--ai)" }}>
-              OFFLINE
-            </span>
-            <span className="tag" style={{ color: "var(--sil)" }}>
-              100% PRIVATE
-            </span>
-          </div>
         </div>
 
         <div className="ai g g3" id="ai">
@@ -85,10 +86,7 @@ export const AIDiagnostics: React.FC = () => {
           </div>
 
           {LOG_ITEMS.map((log, i) => (
-            <div
-              key={log}
-              className={`lg2 ${i < visibleLogCount ? "on" : ""}`}
-            >
+            <div key={log} className={`lg2 ${i < visibleLogCount ? "on" : ""}`}>
               {log}
             </div>
           ))}
@@ -118,8 +116,10 @@ export const AIDiagnostics: React.FC = () => {
           <div className={`ans ${showAnswer ? "on" : ""}`} id="ans">
             <small>DIAGNOSIS</small>
             <br />
-            Most of the increase came from <em>late-night food delivery</em>:{" "}
-            <em>31% more</em> than your 30-day average, mostly between 9 PM and 12 AM.
+            Most of the increase came from <em>
+              late-night food delivery
+            </em>: <em>31% more</em> than your 30-day average, mostly between 9
+            PM and 12 AM.
           </div>
         </div>
       </div>
